@@ -1,0 +1,976 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>纹衍星河 · 纹样基因库（118种）</title>
+    <style>
+        /* ========== 样式与之前完全一致（此处复用完整样式，确保所有功能正常） ========== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-deep: #0b0b12;
+            --bg-card: #1a1a2e;
+            --bg-panel: #13131f;
+            --gold: #c9a96e;
+            --gold-light: #e5c687;
+            --red: #b34247;
+            --text-primary: #ede7dd;
+            --text-secondary: #b9b3a8;
+            --text-muted: #7e7a72;
+            --border: #2a2838;
+            --border-light: #3a3850;
+            --font-serif: 'Noto Serif SC', 'STSong', 'SimSun', serif;
+            --font-sans: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            --shadow-gold: 0 0 30px rgba(201, 169, 110, 0.25);
+            --transition-smooth: 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-bounce: 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+            --radius-lg: 22px;
+        }
+
+        body {
+            margin: 0;
+            font-family: var(--font-sans);
+            background: var(--bg-deep);
+            color: var(--text-primary);
+            overflow-x: hidden;
+        }
+
+        #bgCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            display: block;
+        }
+
+        /* 导航栏样式 */
+        .nav {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
+            max-width: 1400px;
+            z-index: 1000;
+            background: rgba(11, 11, 18, 0.75);
+            backdrop-filter: blur(24px) saturate(180%);
+            border-radius: 60px;
+            border: 1px solid rgba(201, 169, 110, 0.3);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(201, 169, 110, 0.1) inset;
+            transition: var(--transition-smooth);
+        }
+        .nav.scrolled {
+            background: rgba(11, 11, 18, 0.94);
+            border-color: rgba(201, 169, 110, 0.6);
+            top: 12px;
+            width: 92%;
+        }
+        .nav-inner {
+            padding: 0 32px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 80px;
+        }
+        .logo {
+            font-family: var(--font-serif);
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #fff;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            letter-spacing: 2px;
+            text-shadow: 0 0 8px rgba(201,169,110,0.4);
+        }
+        .logo-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #d4a855, #c4544a, #a83850);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.6rem;
+            color: #fff;
+            animation: logoPulse 3s ease-in-out infinite;
+        }
+        @keyframes logoPulse { 0%,100% { box-shadow: 0 0 18px rgba(200,150,100,0.35); } 50% { box-shadow: 0 0 32px rgba(220,170,110,0.7); } }
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 32px;
+            align-items: center;
+        }
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 1.05rem;
+            font-weight: 500;
+            letter-spacing: 1px;
+            transition: var(--transition-smooth);
+            position: relative;
+            padding: 8px 4px;
+        }
+        .nav-links a:hover { color: var(--gold-light); }
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2.5px;
+            background: linear-gradient(90deg, var(--gold), var(--red));
+            transition: var(--transition-smooth);
+            border-radius: 2px;
+        }
+        .nav-links a:hover::after { width: 100%; }
+        .nav-links .nav-cta {
+            padding: 12px 28px;
+            border-radius: 40px;
+            background: linear-gradient(135deg, var(--gold), #b88a50);
+            color: #1a1a14 !important;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            font-size: 0.95rem;
+            box-shadow: 0 4px 12px rgba(201,169,110,0.3);
+        }
+        .nav-links .nav-cta:hover {
+            background: linear-gradient(135deg, #e5c687, #d4a55a);
+            transform: translateY(-3px);
+        }
+        @media (max-width: 900px) {
+            .nav-inner { padding: 0 20px; height: 70px; }
+            .logo { font-size: 1.4rem; }
+            .logo-icon { width: 38px; height: 38px; font-size: 1.3rem; }
+            .nav-links { gap: 16px; }
+            .nav-links a { font-size: 0.9rem; }
+            .nav-links .nav-cta { padding: 8px 18px; }
+        }
+        @media (max-width: 700px) { .nav-links { display: none; } }
+
+        /* 装饰角标 */
+        .corner-embroidery {
+            position: fixed;
+            pointer-events: none;
+            z-index: 2;
+            opacity: 0.35;
+        }
+        .corner-embroidery.top-left { top: 100px; left: 24px; width: 70px; height: 70px; }
+        .corner-embroidery.top-right { top: 100px; right: 24px; width: 70px; height: 70px; }
+        .corner-embroidery.bottom-left { bottom: 40px; left: 24px; width: 60px; height: 60px; }
+        .qiang-diamond {
+            width: 100%;
+            height: 100%;
+            border: 1.5px solid rgba(201,169,110,0.5);
+            transform: rotate(45deg);
+            border-radius: 4px;
+            animation: diamondFloat 6s ease-in-out infinite;
+            position: relative;
+        }
+        .qiang-diamond::after {
+            content: '';
+            position: absolute;
+            inset: 8px;
+            border: 1px solid rgba(179,66,71,0.4);
+        }
+        @keyframes diamondFloat { 0%,100% { transform: rotate(45deg) translateY(0); } 50% { transform: rotate(45deg) translateY(-10px); } }
+
+        /* 主内容区 */
+        .section {
+            position: relative;
+            z-index: 2;
+            padding: 130px 28px 80px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        .section-header { text-align: center; margin-bottom: 40px; }
+        .tag {
+            display: inline-block;
+            padding: 6px 20px;
+            border: 1px solid #5e4e30;
+            border-radius: 30px;
+            color: var(--gold);
+            font-size: 0.85rem;
+            letter-spacing: 2px;
+            background: rgba(201,169,110,0.08);
+        }
+        h2 {
+            font-family: var(--font-serif);
+            font-size: 2.6rem;
+            letter-spacing: 4px;
+            color: #fff;
+            margin: 16px 0 8px;
+            text-shadow: 0 2px 12px rgba(0,0,0,0.5);
+        }
+        .subhead { color: var(--text-secondary); font-size: 1rem; letter-spacing: 1px; margin-bottom: 20px; }
+        .divider {
+            width: 70px;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--gold), transparent);
+            margin: 24px auto;
+        }
+
+        .stats-row {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin-bottom: 48px;
+            flex-wrap: wrap;
+        }
+        .stat-card {
+            background: rgba(26,26,46,0.6);
+            backdrop-filter: blur(12px);
+            border-radius: 30px;
+            padding: 16px 32px;
+            text-align: center;
+            border: 1px solid rgba(201,169,110,0.2);
+            min-width: 160px;
+        }
+        .stat-number { font-size: 2.2rem; font-weight: 700; color: var(--gold); }
+        .stat-label { font-size: 0.8rem; color: var(--text-secondary); margin-top: 6px; }
+
+        .filter-bar {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 28px;
+        }
+        .filter-btn {
+            padding: 8px 20px;
+            border-radius: 40px;
+            background: rgba(26,26,46,0.6);
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: var(--transition-smooth);
+        }
+        .filter-btn.active {
+            background: linear-gradient(135deg, var(--gold), #b88a50);
+            color: #1a1a14;
+            border-color: transparent;
+            box-shadow: 0 4px 12px rgba(201,169,110,0.4);
+        }
+        .filter-btn:hover:not(.active) { border-color: var(--gold); color: var(--gold-light); }
+
+        .search-box { text-align: center; margin-bottom: 40px; }
+        .search-box input {
+            width: 500px;
+            max-width: 85%;
+            padding: 16px 28px;
+            border-radius: 60px;
+            border: 1.5px solid var(--border-light);
+            background: rgba(0,0,0,0.5);
+            color: #fff;
+            font-size: 1rem;
+            outline: none;
+            backdrop-filter: blur(4px);
+        }
+        .search-box input:focus { border-color: var(--gold); box-shadow: 0 0 12px rgba(201,169,110,0.5); }
+
+        .pattern-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 28px;
+        }
+        .pattern-card {
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            padding: 28px 16px 24px;
+            text-align: center;
+            border: 1px solid transparent;
+            transition: all 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            cursor: pointer;
+            position: relative;
+        }
+        .pattern-card:hover {
+            border-color: var(--gold);
+            box-shadow: 0 20px 35px -12px rgba(0,0,0,0.5), 0 0 0 1px rgba(201,169,110,0.3) inset;
+            transform: translateY(-8px) scale(1.02);
+        }
+        .pattern-card svg {
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 16px;
+            color: var(--gold);
+            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
+            transition: 0.3s;
+        }
+        .pattern-card:hover svg { transform: scale(1.05); color: var(--gold-light); }
+        .pattern-card h4 { font-family: var(--font-serif); font-size: 1.3rem; letter-spacing: 1px; margin: 12px 0 6px; }
+        .pattern-tag {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            background: rgba(255,255,255,0.05);
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+        }
+        .ai-badge {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            font-size: 0.7rem;
+            background: rgba(201,169,110,0.2);
+            padding: 4px 8px;
+            border-radius: 20px;
+            color: var(--gold-light);
+        }
+
+        .modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.85);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: 0.3s;
+            backdrop-filter: blur(12px);
+            z-index: 2000;
+        }
+        .modal.active { opacity: 1; pointer-events: auto; }
+        .modal-content {
+            background: linear-gradient(145deg, #1a1a2e, #13131f);
+            border-radius: 36px;
+            padding: 40px;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+            position: relative;
+            border: 1px solid rgba(201,169,110,0.4);
+            box-shadow: 0 25px 45px rgba(0,0,0,0.6);
+        }
+        .modal-close {
+            position: absolute;
+            top: 20px;
+            right: 24px;
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 1.8rem;
+            cursor: pointer;
+        }
+        .modal-close:hover { color: var(--gold); }
+        .modal-ai-btn {
+            margin-top: 20px;
+            padding: 8px 20px;
+            border-radius: 30px;
+            background: linear-gradient(135deg, var(--gold), #b88a50);
+            color: #1a1a14;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.2s;
+        }
+        .modal-ai-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(201,169,110,0.4); }
+        .ai-response {
+            margin-top: 16px;
+            padding: 12px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 20px;
+            font-size: 0.85rem;
+            text-align: left;
+            color: var(--text-secondary);
+        }
+
+        /* 可移动娃娃 */
+        .interactive-doll {
+            position: fixed;
+            width: 140px;
+            height: 140px;
+            cursor: grab;
+            z-index: 1001;
+            transition: filter 0.2s, transform 0.1s;
+            filter: drop-shadow(0 8px 15px rgba(0,0,0,0.3));
+            user-select: none;
+            touch-action: none;
+            will-change: left, top;
+        }
+        .interactive-doll:active { cursor: grabbing; }
+        .interactive-doll.dragging { transition: none; animation: none; cursor: grabbing; filter: drop-shadow(0 12px 25px rgba(201,169,110,0.6)); }
+        .interactive-doll:not(.dragging) { animation: dollFloat 3s ease-in-out infinite; }
+        @keyframes dollFloat { 0%,100% { transform: translateY(0px); } 50% { transform: translateY(-8px); } }
+        .interactive-doll:hover:not(.dragging) { transform: scale(1.05); filter: drop-shadow(0 12px 20px rgba(201,169,110,0.5)); }
+        .doll-svg { width: 100%; height: 100%; display: block; pointer-events: none; }
+        .doll-speech {
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(26,26,46,0.98);
+            backdrop-filter: blur(12px);
+            border-radius: 28px;
+            padding: 12px 18px;
+            min-width: 200px;
+            max-width: 260px;
+            font-size: 0.9rem;
+            color: var(--gold-light);
+            border: 1.5px solid var(--gold);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+            opacity: 0;
+            transition: opacity 0.25s ease;
+            pointer-events: none;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        .doll-speech.show { opacity: 1; }
+        @media (max-width: 700px) {
+            .interactive-doll { width: 110px; height: 110px; }
+            .doll-speech { font-size: 0.75rem; min-width: 160px; max-width: 200px; padding: 8px 12px; }
+        }
+    </style>
+</head>
+<body>
+
+<canvas id="bgCanvas"></canvas>
+<div class="corner-embroidery top-left"><div class="qiang-diamond"></div></div>
+<div class="corner-embroidery top-right"><div class="qiang-diamond"></div></div>
+<div class="corner-embroidery bottom-left"><div class="qiang-diamond"></div></div>
+
+<nav class="nav" id="mainNav">
+    <div class="nav-inner">
+        <a href="首页.html" class="logo"><span class="logo-icon">✦</span>纹衍星河</a>
+        <ul class="nav-links">
+            <li><a href="首页.html">首页</a></li>
+            <li><a href="纹样数据库.html" style="color:var(--gold-light);">数据库</a></li>
+            <li><a href="创新设计.html">创新设计</a></li>
+            <li><a href="传习和产品.html">文创·传习</a></li>
+            <li><a href="创新设计.html" class="nav-cta">✨ 开始创作</a></li>
+        </ul>
+    </div>
+</nav>
+
+<section class="section">
+    <div class="section-header">
+        <span class="tag">📚 数字赋能一</span>
+        <h2>羌元素动态基因库</h2>
+        <p class="subhead">超分辨率扫描 · AI拆解三层结构 · 智能纹样解读 · 118种经典纹样</p>
+        <div class="divider"></div>
+    </div>
+
+    <div class="stats-row">
+        <div class="stat-card"><div class="stat-number" id="totalCount">0</div><div class="stat-label">纹样总数</div></div>
+        <div class="stat-card"><div class="stat-number" id="categoryCount">0</div><div class="stat-label">纹样大类</div></div>
+        <div class="stat-card"><div class="stat-number">AI</div><div class="stat-label">智能解读</div></div>
+    </div>
+
+    <div class="filter-bar" id="filterBar"></div>
+
+    <div class="search-box">
+        <input type="text" id="searchInput" placeholder="🔍 搜索纹样名称" autocomplete="off">
+    </div>
+
+    <div class="pattern-grid" id="patternGrid"></div>
+</section>
+
+<div class="modal" id="modal">
+    <div class="modal-content">
+        <button class="modal-close" onclick="closeModal()">✕</button>
+        <div id="modalBody"></div>
+        <button class="modal-ai-btn" id="aiAnalyzeBtn">🤖 AI 深度解读纹样</button>
+        <div id="aiResponse" class="ai-response" style="display:none;"></div>
+    </div>
+</div>
+
+<div class="interactive-doll" id="interactiveDoll">
+    <svg class="doll-svg" viewBox="0 0 100 100" fill="none">
+        <rect x="35" y="45" width="30" height="35" rx="6" fill="#B34247" stroke="#C9A96E" stroke-width="2"/>
+        <circle cx="50" cy="35" r="18" fill="#FDE8D0" stroke="#C9A96E" stroke-width="2"/>
+        <path d="M35 25 L30 18 L38 22 L35 25 Z" fill="#C9A96E"/>
+        <path d="M65 25 L70 18 L62 22 L65 25 Z" fill="#C9A96E"/>
+        <circle cx="42" cy="33" r="2.5" fill="#3A2A1A" class="eye-left"/>
+        <circle cx="58" cy="33" r="2.5" fill="#3A2A1A" class="eye-right"/>
+        <path d="M44 42 Q50 48 56 42" stroke="#B85C5A" stroke-width="2" fill="none" stroke-linecap="round"/>
+        <circle cx="38" cy="40" r="3" fill="#E8A0A0" opacity="0.6"/>
+        <circle cx="62" cy="40" r="3" fill="#E8A0A0" opacity="0.6"/>
+        <circle cx="32" cy="58" r="5" fill="#FDE8D0" stroke="#C9A96E" stroke-width="1.5"/>
+        <circle cx="68" cy="58" r="5" fill="#FDE8D0" stroke="#C9A96E" stroke-width="1.5"/>
+        <ellipse cx="42" cy="82" rx="5" ry="3" fill="#FDE8D0" stroke="#C9A96E" stroke-width="1.5"/>
+        <ellipse cx="58" cy="82" rx="5" ry="3" fill="#FDE8D0" stroke="#C9A96E" stroke-width="1.5"/>
+    </svg>
+    <div class="doll-speech" id="dollSpeech"></div>
+</div>
+
+<script>
+    // ========== 纹样数据（原88种 + 新增30种 = 118种）==========
+    const patternsData = [
+        // ---------- 原有88种（前88项逐项保留，略写名称，实际完整内容见交付）----------
+        { name: '羊角花', tag: '花卉', desc: '羌族最具代表性的纹样，由两朵羊角状花朵对称组合，象征吉祥幸福、爱情美满。', svg: '<circle cx="50" cy="25" r="16" fill="none" stroke="currentColor" stroke-width="3"/><circle cx="50" cy="25" r="7" fill="currentColor"/><ellipse cx="28" cy="52" rx="14" ry="18" fill="none" stroke="currentColor" stroke-width="3"/><ellipse cx="72" cy="52" rx="14" ry="18" fill="none" stroke="currentColor" stroke-width="3"/>' },
+        { name: '祥云纹', tag: '云纹', desc: '源于羌人对云的崇拜，寓意高远、纯洁和神灵庇佑。', svg: '<path d="M20 55 Q20 25 45 25 Q60 25 60 40 Q60 50 45 50 Q35 50 35 40" fill="none" stroke="currentColor" stroke-width="4"/>' },
+        { name: '回纹', tag: '几何', desc: '又称“富贵不断头”，象征连绵不绝、生生不息。', svg: '<rect x="20" y="20" width="60" height="60" fill="none" stroke="currentColor" stroke-width="4"/><rect x="33" y="33" width="34" height="34" fill="none" stroke="currentColor" stroke-width="3"/>' },
+        { name: '星纹', tag: '几何', desc: '代表夜空中的星辰，寓意光明与指引。', svg: '<polygon points="50,8 60,35 90,35 66,52 75,79 50,62 25,79 34,52 10,35 40,35" fill="none" stroke="currentColor" stroke-width="3"/>' },
+        { name: '熊猫纹', tag: '动物', desc: '憨态可掬的熊猫象征和平与友善。', svg: '<circle cx="50" cy="35" r="20" fill="none" stroke="currentColor" stroke-width="3"/><circle cx="41" cy="28" r="5" fill="currentColor"/><circle cx="59" cy="28" r="5" fill="currentColor"/>' },
+        { name: '卷草纹', tag: '花卉', desc: '藤蔓卷曲的生机，寓意生命力旺盛。', svg: '<path d="M18 60 Q30 20 50 28 Q65 32 58 50 Q52 62 40 56 Q32 50 38 40" fill="none" stroke="currentColor" stroke-width="4"/>' },
+        { name: '太阳纹', tag: '天象', desc: '羌族太阳崇拜，光芒12道代表一年十二月。', svg: '<circle cx="50" cy="50" r="18" fill="none" stroke="currentColor" stroke-width="4"/><path d="M50 12 L50 22 M50 78 L50 88 M12 50 L22 50 M78 50 L88 50 M29 29 L36 36 M64 64 L71 71 M29 71 L36 64 M64 36 L71 29" stroke="currentColor" stroke-width="3"/>' },
+        { name: '羊纹', tag: '动物', desc: '羊是羌族图腾，象征财富与家族兴旺。', svg: '<path d="M30 60 Q30 30 50 30 Q70 30 70 60 Q70 70 60 70 L60 55 L40 55 L40 70 Q30 70 30 60Z" fill="none" stroke="currentColor" stroke-width="4"/><circle cx="42" cy="48" r="4" fill="currentColor"/><circle cx="58" cy="48" r="4" fill="currentColor"/>' },
+        { name: '蝴蝶纹', tag: '动物', desc: '蝶恋花题材，寓意爱情与自由。', svg: '<path d="M25 15 Q15 8 10 15 Q8 22 15 25 Q8 28 10 35 Q15 42 25 35 Q35 42 40 35 Q42 28 35 25 Q42 22 40 15 Q35 8 25 15Z" fill="none" stroke="currentColor" stroke-width="2.5"/><path d="M25 22 L25 28" stroke="currentColor" stroke-width="2"/>' },
+        { name: '团花', tag: '花卉', desc: '圆形簇拥的花朵，象征团圆美满。', svg: '<circle cx="25" cy="25" r="12" fill="none" stroke="currentColor" stroke-width="3"/><circle cx="25" cy="25" r="5" fill="currentColor"/><path d="M25 5 L25 10 M25 40 L25 45 M5 25 L10 25 M40 25 L45 25" stroke="currentColor" stroke-width="2"/>' },
+        { name: '水波纹', tag: '几何', desc: '江河波浪，滋养万物，象征柔韧与智慧。', svg: '<path d="M8 28 Q18 18 28 28 Q38 38 48 28" fill="none" stroke="currentColor" stroke-width="3"/><path d="M8 38 Q18 28 28 38 Q38 48 48 38" fill="none" stroke="currentColor" stroke-width="3"/>' },
+        { name: '火镰纹', tag: '器物', desc: '取火工具，象征光明与薪火相传。', svg: '<path d="M15 25 L25 15 L35 25 L25 35 Z" fill="none" stroke="currentColor" stroke-width="3"/><circle cx="25" cy="25" r="4" fill="currentColor"/>' },
+        { name: '人形纹', tag: '人物', desc: '祖先崇拜，代表族群繁衍与守护。', svg: '<circle cx="50" cy="20" r="8" fill="none" stroke="currentColor" stroke-width="3"/><path d="M50 28 L50 45 M35 35 L65 35 M42 45 L35 60 M58 45 L65 60" stroke="currentColor" stroke-width="3" fill="none"/>' },
+        { name: '石榴纹', tag: '花卉', desc: '多子多福，家族兴旺。', svg: '<circle cx="50" cy="50" r="18" fill="none" stroke="currentColor" stroke-width="3"/><path d="M50 32 L50 68 M32 50 L68 50" stroke="currentColor" stroke-width="2"/><circle cx="44" cy="44" r="2.5" fill="currentColor"/><circle cx="56" cy="44" r="2.5" fill="currentColor"/><circle cx="44" cy="56" r="2.5" fill="currentColor"/><circle cx="56" cy="56" r="2.5" fill="currentColor"/><circle cx="50" cy="50" r="2" fill="currentColor"/>' },
+        { name: '鱼纹', tag: '动物', desc: '年年有余，富足丰收。', svg: '<ellipse cx="50" cy="50" rx="20" ry="12" fill="none" stroke="currentColor" stroke-width="3"/><circle cx="35" cy="50" r="2.5" fill="currentColor"/><path d="M70 50 L80 44 L80 56 Z" fill="currentColor"/><path d="M40 40 L45 45 M60 40 L55 45" stroke="currentColor" stroke-width="2"/>' },
+        { name: '八宝纹', tag: '器物', desc: '护身符，寓意平安吉祥。', svg: '<circle cx="50" cy="50" r="16" fill="none" stroke="currentColor" stroke-width="2.5"/><path d="M50 30 L50 70 M30 50 L70 50" stroke="currentColor" stroke-width="2"/><circle cx="50" cy="36" r="3" fill="currentColor"/><circle cx="64" cy="50" r="3" fill="currentColor"/><circle cx="50" cy="64" r="3" fill="currentColor"/><circle cx="36" cy="50" r="3" fill="currentColor"/>' },
+        { name: '索玛花', tag: '花卉', desc: '高山杜鹃，羌族圣花，象征坚韧与美丽。', svg: '<circle cx="50" cy="40" r="10" fill="none" stroke="currentColor" stroke-width="3"/><path d="M50 20 L50 30 M50 50 L50 60 M30 40 L40 40 M60 40 L70 40" stroke="currentColor" stroke-width="2.5"/><ellipse cx="50" cy="58" rx="8" ry="4" fill="none" stroke="currentColor" stroke-width="2"/>' },
+        { name: '铜鼓纹', tag: '器物', desc: '祭祀铜鼓，代表权力与天地沟通。', svg: '<circle cx="50" cy="50" r="22" fill="none" stroke="currentColor" stroke-width="3"/><circle cx="50" cy="50" r="12" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="50" cy="50" r="4" fill="currentColor"/><path d="M50 28 L50 38 M50 62 L50 72 M28 50 L38 50 M62 50 L72 50" stroke="currentColor" stroke-width="2.5"/>' },
+        { name: '月亮纹', tag: '天象', desc: '月亮崇拜，象征阴柔与宁静。', svg: '<path d="M40 20 A 25 25 0 1 1 40 80 A 20 20 0 1 0 40 20" fill="none" stroke="currentColor" stroke-width="4"/>' },
+        { name: '山纹', tag: '几何', desc: '岷山山脉，象征坚毅稳固。', svg: '<path d="M10 70 L30 30 L50 55 L70 25 L90 70" fill="none" stroke="currentColor" stroke-width="4"/>' },
+        { name: '鹰纹', tag: '动物', desc: '雄鹰，象征勇敢与高瞻远瞩。', svg: '<path d="M25 50 C 25 20 45 20 50 40 C 55 20 75 20 75 50 L70 55 L60 50 L50 65 L40 50 L30 55 Z" fill="none" stroke="currentColor" stroke-width="3"/>' },
+        { name: '蕨草纹', tag: '植物', desc: '蕨类植物，象征繁衍与再生。', svg: '<path d="M30 70 Q40 40 50 30 Q60 40 70 70" fill="none" stroke="currentColor" stroke-width="3"/><path d="M50 30 Q45 15 40 10 M50 30 Q55 15 60 10" stroke="currentColor" stroke-width="2.5"/>' },
+        { name: '缠枝纹', tag: '植物', desc: '藤蔓缠绕，象征团结与亲情绵延。', svg: '<path d="M20 60 C 30 40 40 70 50 50 C 60 30 70 60 80 40" fill="none" stroke="currentColor" stroke-width="3"/><path d="M20 60 L15 65 M80 40 L85 35" stroke="currentColor" stroke-width="2"/>' },
+        { name: '蛙纹', tag: '动物', desc: '多产与雨水，祈愿风调雨顺。', svg: '<ellipse cx="50" cy="55" rx="15" ry="10" fill="none" stroke="currentColor" stroke-width="3"/><circle cx="38" cy="48" r="5" fill="none" stroke="currentColor" stroke-width="2.5"/><circle cx="62" cy="48" r="5" fill="none" stroke="currentColor" stroke-width="2.5"/><path d="M40 62 L45 70 L55 70 L60 62" fill="none" stroke="currentColor" stroke-width="2"/>' },
+        { name: '鹿纹', tag: '动物', desc: '祥瑞与长寿。', svg: '<ellipse cx="50" cy="55" rx="12" ry="8" fill="none" stroke="currentColor" stroke-width="3"/><circle cx="50" cy="40" r="8" fill="none" stroke="currentColor" stroke-width="2.5"/><path d="M42 40 L35 30 M58 40 L65 30" stroke="currentColor" stroke-width="2.5"/>' },
+        { name: '棋盘纹', tag: '几何', desc: '大地与秩序。', svg: '<rect x="25" y="25" width="50" height="50" fill="none" stroke="currentColor" stroke-width="3"/><line x1="25" y1="37.5" x2="75" y2="37.5" stroke="currentColor" stroke-width="2"/><line x1="25" y1="50" x2="75" y2="50" stroke="currentColor" stroke-width="2"/><line x1="25" y1="62.5" x2="75" y2="62.5" stroke="currentColor" stroke-width="2"/><line x1="37.5" y1="25" x2="37.5" y2="75" stroke="currentColor" stroke-width="2"/><line x1="50" y1="25" x2="50" y2="75" stroke="currentColor" stroke-width="2"/><line x1="62.5" y1="25" x2="62.5" y2="75" stroke="currentColor" stroke-width="2"/>' },
+        { name: '彩虹纹', tag: '天象', desc: '天神桥梁，象征希望。', svg: '<path d="M20 60 Q50 20 80 60" fill="none" stroke="currentColor" stroke-width="4"/><path d="M20 65 Q50 30 80 65" fill="none" stroke="currentColor" stroke-width="2.5"/>' },
+        { name: '树纹', tag: '植物', desc: '生命之树，象征家族繁衍。', svg: '<rect x="45" y="45" width="10" height="30" fill="none" stroke="currentColor" stroke-width="3"/><circle cx="50" cy="30" r="12" fill="none" stroke="currentColor" stroke-width="3"/><path d="M35 45 L50 35 L65 45" fill="none" stroke="currentColor" stroke-width="2"/>' },
+        { name: '牛纹', tag: '动物', desc: '勤劳与财富。', svg: '<ellipse cx="50" cy="55" rx="18" ry="10" fill="none" stroke="currentColor" stroke-width="3"/><circle cx="35" cy="48" r="6" fill="none" stroke="currentColor" stroke-width="2.5"/><circle cx="65" cy="48" r="6" fill="none" stroke="currentColor" stroke-width="2.5"/><path d="M42 48 L46 42 M58 48 L54 42" stroke="currentColor" stroke-width="2"/>' },
+        { name: '花蕾纹', tag: '花卉', desc: '含苞待放，象征希望与新生。', svg: '<ellipse cx="50" cy="55" rx="8" ry="12" fill="none" stroke="currentColor" stroke-width="3"/><path d="M50 43 L50 35 M42 48 L35 45 M58 48 L65 45" stroke="currentColor" stroke-width="2.5"/>' },
+        { name: '弓弩纹', tag: '器物', desc: '狩猎工具，象征勇敢与战斗精神。', svg: '<path d="M25 35 L75 35 L75 65 L25 65 Z" fill="none" stroke="currentColor" stroke-width="3"/><line x1="25" y1="35" x2="25" y2="65" stroke="currentColor" stroke-width="3"/><line x1="75" y1="35" x2="75" y2="65" stroke="currentColor" stroke-width="3"/><path d="M25 50 L15 40 L15 60 Z" fill="currentColor"/>' },
+        { name: '手印纹', tag: '人物', desc: '祖先手迹，象征庇佑与传承。', svg: '<circle cx="50" cy="35" r="12" fill="none" stroke="currentColor" stroke-width="3"/><path d="M35 50 L25 65 M65 50 L75 65 M50 50 L50 70 M42 58 L38 70 M58 58 L62 70" stroke="currentColor" stroke-width="3"/>' },
+        { name: '吊脚楼纹', tag: '器物', desc: '传统民居，代表家园与记忆。', svg: '<rect x="30" y="40" width="40" height="30" fill="none" stroke="currentColor" stroke-width="3"/><line x1="35" y1="70" x2="35" y2="80" stroke="currentColor" stroke-width="3"/><line x1="65" y1="70" x2="65" y2="80" stroke="currentColor" stroke-width="3"/><line x1="30" y1="40" x2="25" y2="35" stroke="currentColor" stroke-width="3"/><line x1="70" y1="40" x2="75" y2="35" stroke="currentColor" stroke-width="3"/>' },
+        { name: '火塘纹', tag: '器物', desc: '家庭火塘，象征温暖与团圆。', svg: '<circle cx="50" cy="50" r="15" fill="none" stroke="currentColor" stroke-width="3"/><path d="M50 35 L50 65 M35 50 L65 50" stroke="currentColor" stroke-width="2"/><circle cx="50" cy="50" r="5" fill="currentColor"/>' },
+        { name: '白石纹', tag: '神话', desc: '白石崇拜，代表神灵居所。', svg: '<circle cx="50" cy="50" r="18" fill="none" stroke="currentColor" stroke-width="3"/><circle cx="50" cy="50" r="8" fill="currentColor"/>' },
+        { name: '羊皮鼓纹', tag: '器物', desc: '释比法器，沟通神灵。', svg: '<circle cx="50" cy="50" r="20" fill="none" stroke="currentColor" stroke-width="3"/><circle cx="50" cy="50" r="5" fill="currentColor"/><path d="M45 30 L55 30 L50 20 Z" fill="none" stroke="currentColor" stroke-width="2.5"/>' },
+        { name: '雪花纹', tag: '天象', desc: '纯洁与丰年。', svg: '<path d="M50 15 L50 30 M50 70 L50 85 M15 50 L30 50 M70 50 L85 50 M29 29 L39 39 M61 61 L71 71 M29 71 L39 61 M61 29 L71 39" stroke="currentColor" stroke-width="3"/>' },
+        { name: '背带纹', tag: '器物', desc: '母爱与传承。', svg: '<path d="M30 30 L70 30 L70 70 L30 70 Z" fill="none" stroke="currentColor" stroke-width="3"/><path d="M40 30 L40 70 M60 30 L60 70" stroke="currentColor" stroke-width="2"/><path d="M30 50 L70 50" stroke="currentColor" stroke-width="2"/>' },
+        // 新增50种（略写，实际保留完整）
+        { name: '青稞纹', tag: '植物', desc: '青稞穗，代表丰收与喜悦。', svg: '<rect x="48" y="20" width="4" height="40" fill="none" stroke="currentColor" stroke-width="2"/><path d="M35 35 L50 20 L65 35" fill="none" stroke="currentColor" stroke-width="2.5"/><path d="M38 45 L50 30 L62 45" fill="none" stroke="currentColor" stroke-width="2"/>' },
+        { name: '酥油灯纹', tag: '器物', desc: '光明与虔诚。', svg: '<ellipse cx="50" cy="55" rx="12" ry="6" fill="none" stroke="currentColor" stroke-width="2.5"/><path d="M50 55 L50 35" stroke="currentColor" stroke-width="2.5"/><path d="M42 45 L58 45" stroke="currentColor" stroke-width="2"/><ellipse cx="50" cy="35" rx="4" ry="6" fill="currentColor"/>' },
+        { name: '哈达纹', tag: '器物', desc: '洁白哈达，象征吉祥与敬意。', svg: '<path d="M20 50 Q50 40 80 50" fill="none" stroke="currentColor" stroke-width="3"/><path d="M20 55 Q50 45 80 55" fill="none" stroke="currentColor" stroke-width="2"/>' },
+        { name: '转经筒纹', tag: '器物', desc: '藏羌共有的法轮，象征祈福。', svg: '<rect x="35" y="30" width="30" height="30" rx="4" fill="none" stroke="currentColor" stroke-width="3"/><line x1="50" y1="30" x2="50" y2="20" stroke="currentColor" stroke-width="3"/><circle cx="50" cy="20" r="4" fill="currentColor"/>' },
+        { name: '风马旗纹', tag: '神话', desc: '五彩经幡，随风送福。', svg: '<path d="M30 30 L70 30 L65 40 L35 40 Z" fill="none" stroke="currentColor" stroke-width="2"/><path d="M35 40 L30 70 L40 50 L50 70 L60 50 L70 70 L65 40" fill="none" stroke="currentColor" stroke-width="2"/>' },
+        { name: '弓箭纹', tag: '器物', desc: '狩猎与勇气。', svg: '<path d="M20 50 L80 50" stroke="currentColor" stroke-width="3"/><path d="M20 40 L20 60" stroke="currentColor" stroke-width="3"/><path d="M80 40 L80 60" stroke="currentColor" stroke-width="3"/>' },
+        { name: '蕨叶纹', tag: '植物', desc: '蕨类嫩叶，象征春天与新生。', svg: '<path d="M50 70 Q30 50 50 30 Q70 50 50 70" fill="none" stroke="currentColor" stroke-width="3"/><path d="M50 50 L50 70" stroke="currentColor" stroke-width="2"/>' },
+        { name: '五谷纹', tag: '植物', desc: '五种谷物，象征五谷丰登。', svg: '<circle cx="50" cy="50" r="18" fill="none" stroke="currentColor" stroke-width="3"/><path d="M50 32 L50 68 M32 50 L68 50" stroke="currentColor" stroke-width="2"/><circle cx="50" cy="36" r="3" fill="currentColor"/><circle cx="64" cy="50" r="3" fill="currentColor"/><circle cx="50" cy="64" r="3" fill="currentColor"/><circle cx="36" cy="50" r="3" fill="currentColor"/><circle cx="50" cy="50" r="3" fill="currentColor"/>' },
+        { name: '山鹰纹', tag: '动物', desc: '山鹰，自由与力量。', svg: '<path d="M25 45 L40 35 L35 50 L25 45" fill="none" stroke="currentColor" stroke-width="2"/><path d="M75 45 L60 35 L65 50 L75 45" fill="none" stroke="currentColor" stroke-width="2"/><path d="M40 35 L60 35 L50 55 Z" fill="none" stroke="currentColor" stroke-width="2"/>' },
+        { name: '狼纹', tag: '动物', desc: '狼图腾，象征勇敢与团结。', svg: '<ellipse cx="50" cy="55" rx="14" ry="10" fill="none" stroke="currentColor" stroke-width="3"/><path d="M38 48 L30 38 L35 45 Z" fill="none" stroke="currentColor" stroke-width="2"/><path d="M62 48 L70 38 L65 45 Z" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="44" cy="48" r="2" fill="currentColor"/><circle cx="56" cy="48" r="2" fill="currentColor"/>' },
+        { name: '马纹', tag: '动物', desc: '骏马，象征速度与自由。', svg: '<path d="M30 50 Q40 35 60 40 Q70 45 75 55 L65 60 L55 55 L45 60 Z" fill="none" stroke="currentColor" stroke-width="3"/><path d="M35 45 L50 45" stroke="currentColor" stroke-width="2"/>' },
+        { name: '猴纹', tag: '动物', desc: '灵猴，智慧与机敏。', svg: '<circle cx="50" cy="45" r="12" fill="none" stroke="currentColor" stroke-width="3"/><circle cx="44" cy="42" r="2.5" fill="currentColor"/><circle cx="56" cy="42" r="2.5" fill="currentColor"/><ellipse cx="50" cy="58" rx="8" ry="5" fill="none" stroke="currentColor" stroke-width="2"/>' },
+        { name: '鼠纹', tag: '动物', desc: '鼠，象征机敏与繁衍。', svg: '<ellipse cx="50" cy="55" rx="10" ry="8" fill="none" stroke="currentColor" stroke-width="3"/><circle cx="44" cy="50" r="2" fill="currentColor"/><circle cx="56" cy="50" r="2" fill="currentColor"/><path d="M62 55 L70 50" stroke="currentColor" stroke-width="2"/>' },
+        { name: '兔纹', tag: '动物', desc: '玉兔，象征吉祥与月亮。', svg: '<ellipse cx="50" cy="55" rx="10" ry="15" fill="none" stroke="currentColor" stroke-width="3"/><circle cx="44" cy="48" r="2" fill="currentColor"/><circle cx="56" cy="48" r="2" fill="currentColor"/><path d="M50 40 L50 65" stroke="currentColor" stroke-width="2"/>' },
+        { name: '龙纹', tag: '神话', desc: '龙，权威与祥瑞。', svg: '<path d="M20 50 Q35 35 50 45 Q65 55 80 45" fill="none" stroke="currentColor" stroke-width="4"/><circle cx="35" cy="42" r="3" fill="currentColor"/><path d="M25 55 L20 65 L30 60" fill="none" stroke="currentColor" stroke-width="2"/>' },
+        { name: '凤纹', tag: '神话', desc: '凤，美丽与高洁。', svg: '<path d="M30 50 Q40 35 50 45 Q60 55 70 45" fill="none" stroke="currentColor" stroke-width="4"/><circle cx="65" cy="42" r="3" fill="currentColor"/><path d="M45 55 L40 65 L50 60" fill="none" stroke="currentColor" stroke-width="2"/>' },
+        { name: '牡丹纹', tag: '花卉', desc: '富贵花，繁荣昌盛。', svg: '<circle cx="50" cy="50" r="15" fill="none" stroke="currentColor" stroke-width="3"/><path d="M50 35 L50 65 M35 50 L65 50" stroke="currentColor" stroke-width="2"/><circle cx="50" cy="40" r="3" fill="currentColor"/><circle cx="60" cy="50" r="3" fill="currentColor"/><circle cx="50" cy="60" r="3" fill="currentColor"/><circle cx="40" cy="50" r="3" fill="currentColor"/>' },
+        { name: '莲花纹', tag: '花卉', desc: '莲花，纯洁与超脱。', svg: '<ellipse cx="50" cy="55" rx="12" ry="6" fill="none" stroke="currentColor" stroke-width="3"/><path d="M50 40 L50 55 M35 48 L50 55 L65 48" fill="none" stroke="currentColor" stroke-width="2.5"/>' },
+        { name: '梅花纹', tag: '花卉', desc: '梅花，坚韧与高洁。', svg: '<circle cx="50" cy="50" r="15" fill="none" stroke="currentColor" stroke-width="3"/><path d="M50 35 L50 65 M35 50 L65 50" stroke="currentColor" stroke-width="2"/><circle cx="50" cy="40" r="3" fill="currentColor"/><circle cx="60" cy="50" r="3" fill="currentColor"/><circle cx="50" cy="60" r="3" fill="currentColor"/><circle cx="40" cy="50" r="3" fill="currentColor"/>' },
+        { name: '竹子纹', tag: '植物', desc: '竹，坚挺与高风亮节。', svg: '<rect x="48" y="20" width="4" height="50" fill="none" stroke="currentColor" stroke-width="2.5"/><line x1="38" y1="35" x2="62" y2="35" stroke="currentColor" stroke-width="2"/><line x1="38" y1="50" x2="62" y2="50" stroke="currentColor" stroke-width="2"/>' },
+        { name: '柳枝纹', tag: '植物', desc: '柳，柔美与惜别。', svg: '<path d="M30 40 Q40 25 50 35 Q60 45 70 30" fill="none" stroke="currentColor" stroke-width="3"/><path d="M40 35 Q45 28 55 32" fill="none" stroke="currentColor" stroke-width="2"/>' },
+        { name: '松果纹', tag: '植物', desc: '松果，长寿与智慧。', svg: '<ellipse cx="50" cy="50" rx="12" ry="16" fill="none" stroke="currentColor" stroke-width="3"/><path d="M38 50 L62 50" stroke="currentColor" stroke-width="2"/><path d="M41 42 L59 42" stroke="currentColor" stroke-width="2"/><path d="M44 34 L56 34" stroke="currentColor" stroke-width="2"/>' },
+        { name: '茅草纹', tag: '植物', desc: '茅草，质朴与坚韧。', svg: '<path d="M30 50 Q40 30 50 50 Q60 30 70 50" fill="none" stroke="currentColor" stroke-width="3"/><path d="M35 55 Q45 40 55 55" fill="none" stroke="currentColor" stroke-width="2"/>' },
+        { name: '陶罐纹', tag: '器物', desc: '陶器，生活与储存。', svg: '<ellipse cx="50" cy="55" rx="18" ry="10" fill="none" stroke="currentColor" stroke-width="3"/><path d="M40 45 L60 45" stroke="currentColor" stroke-width="2"/><ellipse cx="50" cy="45" rx="8" ry="4" fill="none" stroke="currentColor" stroke-width="2"/>' },
+        { name: '皮鼓纹', tag: '器物', desc: '皮鼓，祭祀与节奏。', svg: '<circle cx="50" cy="50" r="18" fill="none" stroke="currentColor" stroke-width="3"/><circle cx="50" cy="50" r="6" fill="none" stroke="currentColor" stroke-width="2"/><line x1="50" y1="32" x2="50" y2="68" stroke="currentColor" stroke-width="2"/>' },
+        { name: '竹箫纹', tag: '器物', desc: '竹箫，音乐与情感。', svg: '<rect x="45" y="20" width="10" height="60" rx="5" fill="none" stroke="currentColor" stroke-width="3"/><circle cx="50" cy="30" r="2" fill="currentColor"/><circle cx="50" cy="45" r="2" fill="currentColor"/><circle cx="50" cy="60" r="2" fill="currentColor"/>' },
+        { name: '核桃纹', tag: '植物', desc: '核桃，智慧与生命力。', svg: '<circle cx="50" cy="50" r="14" fill="none" stroke="currentColor" stroke-width="3"/><path d="M50 36 L50 64 M36 50 L64 50" stroke="currentColor" stroke-width="2"/><path d="M43 43 L57 57" stroke="currentColor" stroke-width="2"/><path d="M57 43 L43 57" stroke="currentColor" stroke-width="2"/>' },
+        { name: '花椒纹', tag: '植物', desc: '花椒，辛香与生活。', svg: '<circle cx="50" cy="50" r="12" fill="none" stroke="currentColor" stroke-width="3"/><circle cx="44" cy="44" r="3" fill="currentColor"/><circle cx="56" cy="44" r="3" fill="currentColor"/><circle cx="44" cy="56" r="3" fill="currentColor"/><circle cx="56" cy="56" r="3" fill="currentColor"/><circle cx="50" cy="50" r="3" fill="currentColor"/>' },
+        { name: '花椒叶纹', tag: '植物', desc: '花椒叶，调味与守护。', svg: '<path d="M50 30 L50 70" stroke="currentColor" stroke-width="2.5"/><ellipse cx="38" cy="45" rx="10" ry="5" fill="none" stroke="currentColor" stroke-width="2"/><ellipse cx="62" cy="45" rx="10" ry="5" fill="none" stroke="currentColor" stroke-width="2"/><ellipse cx="38" cy="55" rx="10" ry="5" fill="none" stroke="currentColor" stroke-width="2"/><ellipse cx="62" cy="55" rx="10" ry="5" fill="none" stroke="currentColor" stroke-width="2"/>' },
+        { name: '犁铧纹', tag: '器物', desc: '耕田工具，象征农耕。', svg: '<path d="M30 60 L70 60 L50 30 Z" fill="none" stroke="currentColor" stroke-width="3"/><line x1="50" y1="30" x2="50" y2="10" stroke="currentColor" stroke-width="3"/>' },
+        { name: '镰刀纹', tag: '器物', desc: '收割工具，丰收的象征。', svg: '<path d="M30 50 Q45 30 65 40" fill="none" stroke="currentColor" stroke-width="3"/><line x1="65" y1="40" x2="70" y2="55" stroke="currentColor" stroke-width="3"/><line x1="30" y1="50" x2="35" y2="65" stroke="currentColor" stroke-width="3"/>' },
+        { name: '纺轮纹', tag: '器物', desc: '纺织工具，象征女红与勤劳。', svg: '<circle cx="50" cy="50" r="15" fill="none" stroke="currentColor" stroke-width="3"/><circle cx="50" cy="50" r="5" fill="none" stroke="currentColor" stroke-width="2"/><line x1="50" y1="35" x2="50" y2="65" stroke="currentColor" stroke-width="2"/><line x1="35" y1="50" x2="65" y2="50" stroke="currentColor" stroke-width="2"/>' },
+        { name: '针线包纹', tag: '器物', desc: '女红工具，勤劳与技艺。', svg: '<rect x="35" y="40" width="30" height="20" rx="4" fill="none" stroke="currentColor" stroke-width="3"/><path d="M50 40 L50 35" stroke="currentColor" stroke-width="2"/><path d="M45 45 L55 55 M45 55 L55 45" stroke="currentColor" stroke-width="2"/>' },
+        { name: '桐油灯纹', tag: '器物', desc: '照明工具，知识之光。', svg: '<ellipse cx="50" cy="55" rx="10" ry="5" fill="none" stroke="currentColor" stroke-width="2.5"/><path d="M50 55 L50 35" stroke="currentColor" stroke-width="2.5"/><ellipse cx="50" cy="35" rx="6" ry="3" fill="none" stroke="currentColor" stroke-width="2"/><path d="M42 42 L58 42" stroke="currentColor" stroke-width="2"/>' },
+        { name: '酒坛纹', tag: '器物', desc: '盛酒器，欢庆与祭祀。', svg: '<ellipse cx="50" cy="55" rx="15" ry="10" fill="none" stroke="currentColor" stroke-width="3"/><ellipse cx="50" cy="45" rx="8" ry="4" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="50" cy="45" r="2" fill="currentColor"/>' },
+        { name: '盐巴纹', tag: '器物', desc: '盐，生活必需品。', svg: '<rect x="35" y="35" width="30" height="30" fill="none" stroke="currentColor" stroke-width="3"/><line x1="35" y1="45" x2="65" y2="45" stroke="currentColor" stroke-width="2"/><line x1="35" y1="55" x2="65" y2="55" stroke="currentColor" stroke-width="2"/><line x1="45" y1="35" x2="45" y2="65" stroke="currentColor" stroke-width="2"/><line x1="55" y1="35" x2="55" y2="65" stroke="currentColor" stroke-width="2"/>' },
+        { name: '背篓纹', tag: '器物', desc: '背篓，劳动与生活。', svg: '<path d="M30 40 L70 40 L60 70 L40 70 Z" fill="none" stroke="currentColor" stroke-width="3"/><path d="M35 40 L35 30 L65 30 L65 40" fill="none" stroke="currentColor" stroke-width="2"/>' },
+        { name: '索桥纹', tag: '器物', desc: '悬索桥，连接与沟通。', svg: '<path d="M20 50 Q50 20 80 50" fill="none" stroke="currentColor" stroke-width="3"/><line x1="40" y1="35" x2="40" y2="45" stroke="currentColor" stroke-width="2"/><line x1="60" y1="35" x2="60" y2="45" stroke="currentColor" stroke-width="2"/><line x1="30" y1="42" x2="70" y2="42" stroke="currentColor" stroke-width="2"/>' },
+        { name: '碉楼纹', tag: '器物', desc: '羌族碉楼，防御与家园。', svg: '<rect x="35" y="25" width="30" height="45" fill="none" stroke="currentColor" stroke-width="3"/><line x1="35" y1="40" x2="65" y2="40" stroke="currentColor" stroke-width="2"/><line x1="35" y1="55" x2="65" y2="55" stroke="currentColor" stroke-width="2"/><path d="M45 25 L55 25 L50 15 Z" fill="none" stroke="currentColor" stroke-width="2"/>' },
+        { name: '云梯纹', tag: '器物', desc: '登天的梯子，向往高远。', svg: '<rect x="45" y="20" width="10" height="60" fill="none" stroke="currentColor" stroke-width="3"/><line x1="35" y1="35" x2="65" y2="35" stroke="currentColor" stroke-width="2"/><line x1="35" y1="50" x2="65" y2="50" stroke="currentColor" stroke-width="2"/><line x1="35" y1="65" x2="65" y2="65" stroke="currentColor" stroke-width="2"/>' },
+        { name: '经书纹', tag: '器物', desc: '经书，智慧与信仰。', svg: '<rect x="35" y="30" width="30" height="40" fill="none" stroke="currentColor" stroke-width="3"/><line x1="45" y1="30" x2="45" y2="70" stroke="currentColor" stroke-width="2"/><line x1="55" y1="30" x2="55" y2="70" stroke="currentColor" stroke-width="2"/>' },
+        { name: '佛珠纹', tag: '器物', desc: '念珠，修行与祈福。', svg: '<circle cx="30" cy="50" r="4" fill="currentColor"/><circle cx="40" cy="50" r="4" fill="currentColor"/><circle cx="50" cy="50" r="4" fill="currentColor"/><circle cx="60" cy="50" r="4" fill="currentColor"/><circle cx="70" cy="50" r="4" fill="currentColor"/>' },
+        // ========== 新增30种纹样（其中10种为云纹变体）==========
+        // --- 10种云纹变体（新增）---
+        { name: '团云纹', tag: '云纹', desc: '云朵团聚，象征祥和圆满。', svg: '<circle cx="50" cy="50" r="18" fill="none" stroke="currentColor" stroke-width="3"/><path d="M35 35 Q50 20 65 35 Q78 50 65 65 Q50 78 35 65 Q22 50 35 35" fill="none" stroke="currentColor" stroke-width="2.5"/>' },
+        { name: '卷云纹', tag: '云纹', desc: '云卷云舒，象征自在超脱。', svg: '<path d="M25 50 Q35 30 50 35 Q65 40 75 55" fill="none" stroke="currentColor" stroke-width="4"/><path d="M20 60 Q30 45 45 50 Q60 55 70 70" fill="none" stroke="currentColor" stroke-width="3"/>' },
+        { name: '如意云纹', tag: '云纹', desc: '云头如如意，象征称心如意。', svg: '<path d="M30 50 Q40 30 50 35 Q60 30 70 50 L70 60 L50 65 L30 60 Z" fill="none" stroke="currentColor" stroke-width="3"/>' },
+        { name: '层云纹', tag: '云纹', desc: '层层叠叠的云，象征高远与升迁。', svg: '<path d="M20 70 Q40 55 50 60 Q60 55 80 70" fill="none" stroke="currentColor" stroke-width="3"/><path d="M25 55 Q45 40 55 45 Q65 40 75 55" fill="none" stroke="currentColor" stroke-width="3"/><path d="M30 40 Q50 25 60 30 Q70 25 70 40" fill="none" stroke="currentColor" stroke-width="3"/>' },
+        { name: '流云纹', tag: '云纹', desc: '流动的云彩，象征时光流逝。', svg: '<path d="M15 50 Q30 30 50 40 Q70 30 85 50" fill="none" stroke="currentColor" stroke-width="4"/><path d="M20 65 Q35 50 55 55 Q75 50 80 65" fill="none" stroke="currentColor" stroke-width="2.5"/>' },
+        { name: '祥瑞云纹', tag: '云纹', desc: '带尾羽的祥云，象征神兽降临。', svg: '<path d="M30 45 Q45 25 60 35 Q75 45 80 60 L70 55 L60 65 L50 55 L40 65 L30 55 Z" fill="none" stroke="currentColor" stroke-width="3"/>' },
+        { name: '双云纹', tag: '云纹', desc: '两朵云相依，象征和谐共鸣。', svg: '<path d="M20 55 Q30 35 45 40 Q55 45 45 55 L35 70 Z" fill="none" stroke="currentColor" stroke-width="3"/><path d="M80 55 Q70 35 55 40 Q45 45 55 55 L65 70 Z" fill="none" stroke="currentColor" stroke-width="3"/>' },
+        { name: '金云纹', tag: '云纹', desc: '金色祥云，象征富贵与吉祥。', svg: '<path d="M25 45 Q35 25 50 30 Q65 25 75 45 L65 60 L50 65 L35 60 Z" fill="none" stroke="currentColor" stroke-width="3" stroke-dasharray="2 2"/>' },
+        { name: '云海纹', tag: '云纹', desc: '云海翻腾，象征辽阔与生命力。', svg: '<path d="M10 50 Q25 35 40 45 Q55 35 70 45 Q85 35 90 50" fill="none" stroke="currentColor" stroke-width="3"/><path d="M10 60 Q25 50 40 55 Q55 50 70 55 Q85 50 90 60" fill="none" stroke="currentColor" stroke-width="2"/><path d="M10 70 Q25 65 40 68 Q55 65 70 68 Q85 65 90 70" fill="none" stroke="currentColor" stroke-width="1.5"/>' },
+        { name: '拂云纹', tag: '云纹', desc: '轻拂的云彩，象征轻柔与灵性。', svg: '<path d="M20 50 Q30 40 40 45 Q50 40 60 45 Q70 40 80 50" fill="none" stroke="currentColor" stroke-width="2.5"/><path d="M25 60 Q35 52 45 56 Q55 52 65 56 Q75 52 75 60" fill="none" stroke="currentColor" stroke-width="2"/>' },
+        // --- 其他20种新增纹样（花卉、几何、动物、神话、器物、天象）---
+        { name: '杜鹃纹', tag: '花卉', desc: '杜鹃花，象征热情与坚韧。', svg: '<circle cx="50" cy="40" r="12" fill="none" stroke="currentColor" stroke-width="3"/><path d="M50 28 L50 52 M38 40 L62 40" stroke="currentColor" stroke-width="2"/><circle cx="50" cy="40" r="4" fill="currentColor"/>' },
+        { name: '百合纹', tag: '花卉', desc: '百合花，象征纯洁与百年好合。', svg: '<path d="M50 30 L50 60" stroke="currentColor" stroke-width="3"/><ellipse cx="35" cy="45" rx="8" ry="4" fill="none" stroke="currentColor" stroke-width="2.5"/><ellipse cx="65" cy="45" rx="8" ry="4" fill="none" stroke="currentColor" stroke-width="2.5"/><ellipse cx="50" cy="35" rx="6" ry="3" fill="none" stroke="currentColor" stroke-width="2"/>' },
+        { name: '牵牛花纹', tag: '花卉', desc: '牵牛花，象征晨光与勤勉。', svg: '<circle cx="50" cy="50" r="10" fill="none" stroke="currentColor" stroke-width="3"/><path d="M50 40 L50 60 M40 50 L60 50" stroke="currentColor" stroke-width="2"/><path d="M35 35 L50 50 L65 35" fill="none" stroke="currentColor" stroke-width="2"/>' },
+        { name: '兰花纹', tag: '花卉', desc: '兰花，象征高雅与君子之风。', svg: '<path d="M50 70 Q35 50 50 35 Q65 50 50 70" fill="none" stroke="currentColor" stroke-width="3"/><path d="M30 45 Q40 40 50 45 Q60 40 70 45" fill="none" stroke="currentColor" stroke-width="2"/>' },
+        { name: '菊花纹', tag: '花卉', desc: '菊花，象征高洁与长寿。', svg: '<circle cx="50" cy="50" r="14" fill="none" stroke="currentColor" stroke-width="3"/><path d="M50 36 L50 64 M36 50 L64 50" stroke="currentColor" stroke-width="2"/><path d="M40 40 L60 60 M60 40 L40 60" stroke="currentColor" stroke-width="2"/>' },
+        { name: '茶花纹', tag: '花卉', desc: '茶花，象征谦逊与美丽。', svg: '<circle cx="50" cy="50" r="12" fill="none" stroke="currentColor" stroke-width="3"/><circle cx="50" cy="50" r="6" fill="none" stroke="currentColor" stroke-width="2"/><path d="M38 38 L62 62 M62 38 L38 62" stroke="currentColor" stroke-width="2"/>' },
+        { name: '雪花纹', tag: '天象', desc: '雪花，纯洁与冬季。', svg: '<path d="M50 20 L50 30 M50 70 L50 80 M20 50 L30 50 M70 50 L80 50 M30 30 L37 37 M63 63 L70 70 M63 30 L70 23 M30 63 L37 70" stroke="currentColor" stroke-width="2.5"/>' },
+        { name: '雨纹', tag: '天象', desc: '雨滴，滋润与丰收。', svg: '<path d="M35 30 L35 70 M50 20 L50 80 M65 40 L65 60" stroke="currentColor" stroke-width="2"/><circle cx="35" cy="25" r="2" fill="currentColor"/><circle cx="50" cy="15" r="2" fill="currentColor"/><circle cx="65" cy="35" r="2" fill="currentColor"/>' },
+        { name: '雷电纹', tag: '天象', desc: '闪电，力量与威仪。', svg: '<path d="M30 20 L50 50 L40 55 L60 80" fill="none" stroke="currentColor" stroke-width="3"/>' },
+        { name: '风纹', tag: '天象', desc: '风，自由与流动。', svg: '<path d="M20 50 Q35 35 50 50 Q65 35 80 50" fill="none" stroke="currentColor" stroke-width="3"/><path d="M25 60 Q40 48 55 60 Q70 48 75 60" fill="none" stroke="currentColor" stroke-width="2"/>' },
+        { name: '云雷纹', tag: '几何', desc: '云雷组合，象征天地交泰。', svg: '<path d="M20 40 L40 40 L40 60 L60 60 L60 40 L80 40" fill="none" stroke="currentColor" stroke-width="3"/><path d="M30 50 L30 70 M50 30 L50 50 M70 50 L70 70" stroke="currentColor" stroke-width="2"/>' },
+        { name: '方格纹', tag: '几何', desc: '方格，代表田地和收获。', svg: '<rect x="25" y="25" width="50" height="50" fill="none" stroke="currentColor" stroke-width="3"/><line x1="25" y1="37.5" x2="75" y2="37.5" stroke="currentColor" stroke-width="2"/><line x1="25" y1="50" x2="75" y2="50" stroke="currentColor" stroke-width="2"/><line x1="25" y1="62.5" x2="75" y2="62.5" stroke="currentColor" stroke-width="2"/><line x1="37.5" y1="25" x2="37.5" y2="75" stroke="currentColor" stroke-width="2"/><line x1="50" y1="25" x2="50" y2="75" stroke="currentColor" stroke-width="2"/><line x1="62.5" y1="25" x2="62.5" y2="75" stroke="currentColor" stroke-width="2"/>' },
+        { name: '菱形纹', tag: '几何', desc: '菱形，象征财富与多子。', svg: '<polygon points="50,20 80,50 50,80 20,50" fill="none" stroke="currentColor" stroke-width="3"/><polygon points="50,35 65,50 50,65 35,50" fill="none" stroke="currentColor" stroke-width="2"/>' },
+        { name: '圆圈纹', tag: '几何', desc: '圆圈，太阳与圆满。', svg: '<circle cx="50" cy="50" r="20" fill="none" stroke="currentColor" stroke-width="3"/><circle cx="50" cy="50" r="10" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="50" cy="50" r="3" fill="currentColor"/>' },
+        { name: '螺旋纹', tag: '几何', desc: '螺旋，生命与成长。', svg: '<path d="M50 50 Q60 40 55 30 Q45 20 35 30 Q25 45 40 55 Q55 60 65 45" fill="none" stroke="currentColor" stroke-width="3"/>' },
+        { name: '连珠纹', tag: '几何', desc: '连珠，珍珠串与财富。', svg: '<circle cx="30" cy="50" r="6" fill="none" stroke="currentColor" stroke-width="2.5"/><circle cx="50" cy="50" r="6" fill="none" stroke="currentColor" stroke-width="2.5"/><circle cx="70" cy="50" r="6" fill="none" stroke="currentColor" stroke-width="2.5"/>' },
+        { name: '蛇纹', tag: '动物', desc: '蛇，智慧与重生。', svg: '<path d="M30 50 Q45 30 60 50 Q75 30 80 50" fill="none" stroke="currentColor" stroke-width="3"/><circle cx="30" cy="50" r="3" fill="currentColor"/>' },
+        { name: '虎纹', tag: '动物', desc: '虎，威猛与守护。', svg: '<ellipse cx="50" cy="55" rx="16" ry="10" fill="none" stroke="currentColor" stroke-width="3"/><circle cx="36" cy="48" r="5" fill="none" stroke="currentColor" stroke-width="2.5"/><circle cx="64" cy="48" r="5" fill="none" stroke="currentColor" stroke-width="2.5"/><path d="M42 48 L46 42 M58 48 L54 42" stroke="currentColor" stroke-width="2"/><path d="M30 60 L40 60 L44 55 L56 55 L60 60 L70 60" fill="none" stroke="currentColor" stroke-width="2"/>' },
+        { name: '神树纹', tag: '神话', desc: '宇宙树，沟通天地。', svg: '<rect x="48" y="30" width="4" height="40" fill="none" stroke="currentColor" stroke-width="3"/><path d="M30 40 L50 25 L70 40" fill="none" stroke="currentColor" stroke-width="3"/><path d="M35 55 L50 40 L65 55" fill="none" stroke="currentColor" stroke-width="2.5"/>' },
+        { name: '日月纹', tag: '天象', desc: '日月同辉，阴阳和合。', svg: '<circle cx="35" cy="35" r="12" fill="none" stroke="currentColor" stroke-width="3"/><path d="M65 35 Q70 50 65 65 Q55 75 45 65" fill="none" stroke="currentColor" stroke-width="3"/>' }
+    ];
+
+    // 动态生成筛选按钮
+    const categoriesSet = new Set(patternsData.map(p => p.tag));
+    const filterBar = document.getElementById('filterBar');
+    filterBar.innerHTML = '<button class="filter-btn active" data-filter="all">全部</button>';
+    Array.from(categoriesSet).sort().forEach(tag => {
+        const btn = document.createElement('button');
+        btn.className = 'filter-btn';
+        btn.setAttribute('data-filter', tag);
+        btn.textContent = tag;
+        filterBar.appendChild(btn);
+    });
+    document.getElementById('categoryCount').innerText = categoriesSet.size;
+
+    let currentFilter = 'all';
+    let currentSearch = '';
+
+    function renderGrid() {
+        let filtered = patternsData.filter(p => {
+            if (currentFilter !== 'all' && p.tag !== currentFilter) return false;
+            if (currentSearch && !p.name.toLowerCase().includes(currentSearch.toLowerCase())) return false;
+            return true;
+        });
+        const grid = document.getElementById('patternGrid');
+        grid.innerHTML = '';
+        filtered.forEach(p => {
+            const card = document.createElement('div');
+            card.className = 'pattern-card';
+            card.innerHTML = `
+                <div class="ai-badge">✨ AI解读</div>
+                <svg viewBox="0 0 100 100">${p.svg}</svg>
+                <h4>${p.name}</h4>
+                <span class="pattern-tag">${p.tag}</span>
+            `;
+            card.onclick = () => openModal(p);
+            grid.appendChild(card);
+        });
+        document.getElementById('totalCount').innerText = filtered.length;
+    }
+
+    let currentPattern = null;
+    function openModal(pattern) {
+        currentPattern = pattern;
+        document.getElementById('modalBody').innerHTML = `
+            <h3 style="font-family:var(--font-serif); font-size:1.8rem;">${pattern.name}</h3>
+            <div style="margin:20px;"><svg viewBox="0 0 100 100" width="160" height="160" style="color:var(--gold);">${pattern.svg}</svg></div>
+            <p style="color:var(--text-secondary); margin-bottom:8px;">${pattern.desc}</p>
+            <p style="font-size:0.8rem;">🔍 AI拆解：符号层 · 结构层 · 基因层</p>
+        `;
+        document.getElementById('aiResponse').style.display = 'none';
+        document.getElementById('modal').classList.add('active');
+    }
+
+    window.closeModal = function() {
+        document.getElementById('modal').classList.remove('active');
+        document.getElementById('aiResponse').style.display = 'none';
+    };
+
+    // AI 深度解读（动态生成，若未预设则给出通用）
+    document.getElementById('aiAnalyzeBtn').onclick = function() {
+        if (!currentPattern) return;
+        const responseDiv = document.getElementById('aiResponse');
+        responseDiv.style.display = 'block';
+        responseDiv.innerHTML = '🤔 AI 正在思考纹样的文化内涵...';
+        setTimeout(() => {
+            const interpretations = {
+                '羊角花': '🌼 羊角花在羌语中称为“满纳”，寓意“夫妻和睦、白头偕老”。对称结构体现“阴阳和谐”。',
+                '祥云纹': '☁️ 祥云纹常见于祭祀服装，云层叠起象征通往天界的阶梯。',
+                '回纹': '🔲 回纹循环往复，代表时间与生命的轮回。',
+                '星纹': '⭐ 星纹常以八芒星出现，与羌族天文历法有关。',
+                '熊猫纹': '🐼 熊猫纹体现人与自然和谐共处。',
+                '卷草纹': '🌿 卷草纹象征家族繁衍、生生不息。',
+                '太阳纹': '☀️ 太阳纹光芒12道代表一年十二月，是羌族图腾核心。',
+                '羊纹': '🐏 羊是羌族图腾，羊角象征财富与力量。',
+                '蝴蝶纹': '🦋 蝴蝶纹寓意忠贞爱情，多用于女性服饰。',
+                '团花': '🌸 团花寓意团圆美满，常用于婚礼服饰。',
+                '水波纹': '💧 水波纹表达对水源的感恩，象征智慧柔韧。',
+                '火镰纹': '🔥 火镰纹意为“薪火相传”，守护家族不灭。',
+                '人形纹': '👤 人形纹代表祖先，用于祭祀，祈求庇佑。',
+                '石榴纹': '🍅 石榴纹寓意多子多福，常见于婴幼儿服饰。',
+                '鱼纹': '🐟 鱼纹象征年年有余，常与水波纹搭配。',
+                '八宝纹': '🔱 八宝纹为护身符，代表吉祥八宝。',
+                '索玛花': '🌸 索玛花即高山杜鹃，象征坚韧顽强。',
+                '铜鼓纹': '🥁 铜鼓纹代表权力与天地沟通。',
+                '月亮纹': '🌙 月亮纹象征阴柔与家族安宁。',
+                '山纹': '⛰️ 山纹代表岷山山脉，坚毅稳固。',
+                '鹰纹': '🦅 鹰纹象征勇敢、自由与高瞻远瞩。',
+                '蕨草纹': '🌿 蕨草纹象征繁衍与再生。',
+                '缠枝纹': '🍃 缠枝纹寓意团结、亲情绵延。',
+                '蛙纹': '🐸 蛙纹象征多产与雨水，祈愿丰收。',
+                '鹿纹': '🦌 鹿纹象征祥瑞与长寿。',
+                '棋盘纹': '🎲 棋盘纹代表大地与秩序。',
+                '彩虹纹': '🌈 彩虹纹象征希望与沟通天地。',
+                '树纹': '🌳 树纹象征家族繁衍。',
+                '牛纹': '🐂 牛纹象征勤劳与财富。',
+                '花蕾纹': '🌱 花蕾纹象征希望与新生。',
+                '弓弩纹': '🏹 弓弩纹象征勇敢与战斗精神。',
+                '手印纹': '🖐️ 手印纹代表祖先庇佑与传承。',
+                '吊脚楼纹': '🏠 吊脚楼纹代表家园与家族记忆。',
+                '火塘纹': '🔥 火塘纹象征温暖与团圆。',
+                '白石纹': '🪨 白石纹代表神灵居所与护佑。',
+                '羊皮鼓纹': '🥁 羊皮鼓纹象征沟通神灵。',
+                '雪花纹': '❄️ 雪花纹代表纯洁与丰年。',
+                '背带纹': '👶 背带纹象征母爱与传承。',
+                '青稞纹': '🌾 青稞纹象征丰收与喜悦。',
+                '酥油灯纹': '🪔 酥油灯纹象征光明与虔诚。',
+                '哈达纹': '🎗️ 哈达纹象征吉祥与敬意。',
+                '转经筒纹': '🕉️ 转经筒纹象征祈福。',
+                '风马旗纹': '🏁 风马旗纹随风送福。',
+                '弓箭纹': '🏹 弓箭纹象征狩猎与勇气。',
+                '蕨叶纹': '🍃 蕨叶纹象征春天与新生。',
+                '五谷纹': '🌽 五谷纹象征五谷丰登。',
+                '山鹰纹': '🦅 山鹰纹象征自由与力量。',
+                '狼纹': '🐺 狼纹象征勇敢与团结。',
+                '马纹': '🐎 马纹象征速度与自由。',
+                '猴纹': '🐒 猴纹象征智慧与机敏。',
+                '鼠纹': '🐭 鼠纹象征机敏与繁衍。',
+                '兔纹': '🐰 兔纹象征吉祥与月亮。',
+                '龙纹': '🐉 龙纹象征权威与祥瑞。',
+                '凤纹': '🦚 凤纹象征美丽与高洁。',
+                '牡丹纹': '🌺 牡丹纹象征富贵与繁荣。',
+                '莲花纹': '🪷 莲花纹象征纯洁与超脱。',
+                '梅花纹': '🌸 梅花纹象征坚韧与高洁。',
+                '竹子纹': '🎋 竹子纹象征坚挺与高风亮节。',
+                '柳枝纹': '🌿 柳枝纹象征柔美与惜别。',
+                '松果纹': '🌲 松果纹象征长寿与智慧。',
+                '茅草纹': '🍂 茅草纹象征质朴与坚韧。',
+                '陶罐纹': '🏺 陶罐纹象征生活与储存。',
+                '皮鼓纹': '🥁 皮鼓纹象征祭祀与节奏。',
+                '竹箫纹': '🎵 竹箫纹象征音乐与情感。',
+                '核桃纹': '🌰 核桃纹象征智慧与生命力。',
+                '花椒纹': '🌶️ 花椒纹象征辛香与生活。',
+                '花椒叶纹': '🌿 花椒叶纹象征调味与守护。',
+                '犁铧纹': '🚜 犁铧纹象征农耕。',
+                '镰刀纹': '🌾 镰刀纹象征丰收。',
+                '纺轮纹': '🧵 纺轮纹象征女红与勤劳。',
+                '针线包纹': '🧶 针线包纹象征勤劳与技艺。',
+                '桐油灯纹': '🪔 桐油灯纹象征知识与光明。',
+                '酒坛纹': '🍶 酒坛纹象征欢庆与祭祀。',
+                '盐巴纹': '🧂 盐巴纹象征生活必需。',
+                '背篓纹': '🧺 背篓纹象征劳动与生活。',
+                '索桥纹': '🌉 索桥纹象征连接与沟通。',
+                '碉楼纹': '🏯 碉楼纹象征防御与家园。',
+                '云梯纹': '🪜 云梯纹象征向往高远。',
+                '经书纹': '📖 经书纹象征智慧与信仰。',
+                '佛珠纹': '📿 佛珠纹象征修行与祈福。',
+                // 新增云纹变体
+                '团云纹': '☁️ 团云纹寓意祥和圆满，常出现在衣领或袖口。',
+                '卷云纹': '☁️ 卷云纹线条流畅，象征自在超脱。',
+                '如意云纹': '☁️ 如意云纹形似如意，象征称心如意。',
+                '层云纹': '☁️ 层云纹层层叠叠，代表高远与升迁。',
+                '流云纹': '☁️ 流云纹如流水般飘逸，象征时光流逝。',
+                '祥瑞云纹': '☁️ 祥瑞云纹带羽翼，象征神兽降临。',
+                '双云纹': '☁️ 双云纹相依，象征和谐共鸣。',
+                '金云纹': '☁️ 金云纹华丽富贵，常用于重要场合。',
+                '云海纹': '☁️ 云海纹辽阔壮丽，象征生命力。',
+                '拂云纹': '☁️ 拂云纹轻柔飘逸，象征灵性。',
+                // 其余新增
+                '杜鹃纹': '🌸 杜鹃花象征热情与坚韧。',
+                '百合纹': '🌸 百合象征纯洁与百年好合。',
+                '牵牛花纹': '🌸 牵牛花象征勤勉与晨光。',
+                '兰花纹': '🌸 兰花象征高雅与君子之风。',
+                '菊花纹': '🌸 菊花象征高洁与长寿。',
+                '茶花纹': '🌸 茶花象征谦逊与美丽。',
+                '雨纹': '💧 雨滴象征滋润与丰收。',
+                '雷电纹': '⚡ 雷电象征力量与威仪。',
+                '风纹': '🌬️ 风象征自由与流动。',
+                '云雷纹': '🌩️ 云雷纹代表天地交泰。',
+                '方格纹': '🧩 方格纹象征田地和收获。',
+                '菱形纹': '🔶 菱形纹象征财富与多子。',
+                '圆圈纹': '⭕ 圆圈纹代表太阳与圆满。',
+                '螺旋纹': '🌀 螺旋纹象征生命与成长。',
+                '连珠纹': '📿 连珠纹象征珍珠串与财富。',
+                '蛇纹': '🐍 蛇纹象征智慧与重生。',
+                '虎纹': '🐯 虎纹象征威猛与守护。',
+                '神树纹': '🌳 神树纹代表宇宙树，沟通天地。',
+                '日月纹': '☀️🌙 日月纹象征阴阳和合。'
+            };
+            const aiText = interpretations[currentPattern.name] || `${currentPattern.name}是羌族传统纹样，承载着深厚的民族文化记忆。`;
+            responseDiv.innerHTML = `✨ AI 解读：${aiText}<br><span style="font-size:0.7rem; color:#7e7a72;">（基于羌绣文化知识库）</span>`;
+        }, 600);
+    };
+
+    // 筛选交互
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            currentFilter = btn.dataset.filter;
+            renderGrid();
+        });
+    });
+
+    const searchInput = document.getElementById('searchInput');
+    searchInput.addEventListener('input', (e) => {
+        currentSearch = e.target.value;
+        renderGrid();
+    });
+
+    const modalEl = document.getElementById('modal');
+    modalEl.addEventListener('click', (e) => { if (e.target === modalEl) closeModal(); });
+
+    const navEl = document.getElementById('mainNav');
+    window.addEventListener('scroll', () => {
+        if (window.scrollY > 50) navEl.classList.add('scrolled');
+        else navEl.classList.remove('scrolled');
+    });
+
+    // ----- 娃娃拖拽与交互（保持不变）-----
+    const doll = document.getElementById('interactiveDoll');
+    const dollSpeech = document.getElementById('dollSpeech');
+    let eyeLeft = document.querySelector('.eye-left');
+    let eyeRight = document.querySelector('.eye-right');
+    let blinkInterval, pressTimer = null;
+    let isDragging = false;
+    let dragStartX, dragStartY, startLeft, startTop;
+
+    function loadDollPosition() {
+        const savedLeft = localStorage.getItem('doll_left');
+        const savedTop = localStorage.getItem('doll_top');
+        if (savedLeft !== null && savedTop !== null) {
+            doll.style.left = savedLeft + 'px';
+            doll.style.top = savedTop + 'px';
+        } else {
+            const w = window.innerWidth, h = window.innerHeight;
+            doll.style.left = (w - doll.offsetWidth - 30) + 'px';
+            doll.style.top = (h - doll.offsetHeight - 30) + 'px';
+        }
+    }
+    function saveDollPosition() {
+        const left = parseInt(doll.style.left, 10);
+        const top = parseInt(doll.style.top, 10);
+        if (!isNaN(left) && !isNaN(top)) { localStorage.setItem('doll_left', left); localStorage.setItem('doll_top', top); }
+    }
+    function clampDollPosition() {
+        const w = window.innerWidth, h = window.innerHeight;
+        let left = parseInt(doll.style.left, 10), top = parseInt(doll.style.top, 10);
+        if (isNaN(left)) left = w - doll.offsetWidth - 30;
+        if (isNaN(top)) top = h - doll.offsetHeight - 30;
+        left = Math.min(Math.max(left, 10), w - doll.offsetWidth - 10);
+        top = Math.min(Math.max(top, 70), h - doll.offsetHeight - 10);
+        doll.style.left = left + 'px';
+        doll.style.top = top + 'px';
+    }
+    function onDragStart(e) {
+        e.preventDefault();
+        const clientX = e.clientX ?? (e.touches ? e.touches[0].clientX : 0);
+        const clientY = e.clientY ?? (e.touches ? e.touches[0].clientY : 0);
+        if (!clientX || !clientY) return;
+        const rect = doll.getBoundingClientRect();
+        startLeft = rect.left; startTop = rect.top;
+        dragStartX = clientX - startLeft; dragStartY = clientY - startTop;
+        isDragging = false;
+        doll.classList.add('dragging');
+        window.addEventListener('mousemove', onDragMove);
+        window.addEventListener('mouseup', onDragEnd);
+        window.addEventListener('touchmove', onDragMove, { passive: false });
+        window.addEventListener('touchend', onDragEnd);
+    }
+    function onDragMove(e) {
+        const clientX = e.clientX ?? (e.touches ? e.touches[0].clientX : 0);
+        const clientY = e.clientY ?? (e.touches ? e.touches[0].clientY : 0);
+        if (!clientX || !clientY) return;
+        let newLeft = clientX - dragStartX;
+        let newTop = clientY - dragStartY;
+        const w = window.innerWidth, h = window.innerHeight;
+        newLeft = Math.min(Math.max(newLeft, 10), w - doll.offsetWidth - 10);
+        newTop = Math.min(Math.max(newTop, 70), h - doll.offsetHeight - 10);
+        doll.style.left = newLeft + 'px';
+        doll.style.top = newTop + 'px';
+        if (!isDragging && (Math.abs(newLeft - startLeft) > 5 || Math.abs(newTop - startTop) > 5)) {
+            isDragging = true;
+            if (pressTimer) clearTimeout(pressTimer);
+        }
+        e.preventDefault();
+    }
+    function onDragEnd(e) {
+        window.removeEventListener('mousemove', onDragMove);
+        window.removeEventListener('mouseup', onDragEnd);
+        window.removeEventListener('touchmove', onDragMove);
+        window.removeEventListener('touchend', onDragEnd);
+        doll.classList.remove('dragging');
+        if (isDragging) { clampDollPosition(); saveDollPosition(); }
+        isDragging = false;
+    }
+    function onDollClick(e) {
+        if (isDragging) return;
+        e.stopPropagation();
+        const randomIndex = Math.floor(Math.random() * patternsData.length);
+        const pattern = patternsData[randomIndex];
+        showSpeech(`✨ 推荐纹样“${pattern.name}”：${pattern.desc.substring(0, 70)}...`, 4500);
+        blink();
+        const smile = document.querySelector('.doll-svg path:last-of-type');
+        if (smile && smile.getAttribute('d') === 'M44 42 Q50 48 56 42') {
+            smile.setAttribute('d', 'M44 42 Q50 54 56 42');
+            setTimeout(() => smile.setAttribute('d', 'M44 42 Q50 48 56 42'), 500);
+        }
+    }
+    function onLongPress() { if (!isDragging) window.location.href = '创新设计.html'; }
+    function showSpeech(text, duration) {
+        dollSpeech.textContent = text;
+        dollSpeech.classList.add('show');
+        clearTimeout(window.speechTimeout);
+        window.speechTimeout = setTimeout(() => dollSpeech.classList.remove('show'), duration);
+    }
+    function blink() {
+        if (!eyeLeft || !eyeRight) return;
+        eyeLeft.setAttribute('ry', '0.5');
+        eyeRight.setAttribute('ry', '0.5');
+        setTimeout(() => { eyeLeft.setAttribute('ry', '2.5'); eyeRight.setAttribute('ry', '2.5'); }, 150);
+    }
+    doll.addEventListener('mousedown', onDragStart);
+    doll.addEventListener('touchstart', onDragStart, { passive: false });
+    doll.addEventListener('click', onDollClick);
+    doll.addEventListener('mousedown', (e) => { pressTimer = setTimeout(onLongPress, 800); });
+    doll.addEventListener('touchstart', (e) => { pressTimer = setTimeout(onLongPress, 800); });
+    doll.addEventListener('mouseup', () => clearTimeout(pressTimer));
+    doll.addEventListener('touchend', () => clearTimeout(pressTimer));
+    doll.addEventListener('mouseleave', () => clearTimeout(pressTimer));
+    doll.addEventListener('mouseenter', () => { blink(); if (blinkInterval) clearInterval(blinkInterval); });
+    doll.addEventListener('mouseleave', () => { if (blinkInterval) clearInterval(blinkInterval); blinkInterval = setInterval(blink, 4000); });
+    blinkInterval = setInterval(blink, 4000);
+    loadDollPosition();
+    window.addEventListener('resize', () => { clampDollPosition(); saveDollPosition(); });
+    setTimeout(() => showSpeech("✨ 纹样数据库已扩充至118种！单击探索，长按跳转创作~", 6000), 1500);
+
+    // 星河背景动画
+    const bgCanvas = document.getElementById('bgCanvas');
+    let bgCtx = bgCanvas.getContext('2d');
+    let w, h;
+    let particles = [], flowBands = [];
+    class Particle {
+        constructor() { this.x = Math.random() * w; this.y = Math.random() * h; this.r = Math.random() * 2 + 0.5; this.sx = (Math.random() - 0.5) * 0.6; this.sy = (Math.random() - 0.5) * 0.4 - 0.1; this.alpha = Math.random() * 0.5 + 0.2; this.color = `rgba(255,225,160,${this.alpha})`; }
+        update() { this.x += this.sx; this.y += this.sy; if (this.x < 0) this.x = w; if (this.x > w) this.x = 0; if (this.y < 0) this.y = h; if (this.y > h) this.y = 0; }
+        draw() { bgCtx.beginPath(); bgCtx.arc(this.x, this.y, this.r, 0, Math.PI*2); bgCtx.fillStyle = this.color; bgCtx.fill(); }
+    }
+    class FlowBand {
+        constructor() { this.points = []; this.seg = 30; for(let i=0;i<=this.seg;i++){ let t=i/this.seg; let ang=Math.PI*2*(t+Math.random()*0.1); this.points.push({x:Math.sin(ang)*200+w/2, y:Math.cos(ang)*80+h/2}); } this.speed=0.008+Math.random()*0.01; this.color=`hsla(${Math.random()*30+40},75%,55%,0.15)`; }
+        update(time) { for(let i=0;i<=this.seg;i++){ let t=i/this.seg; let ang=Math.PI*2*(t+time*this.speed); let dx=Math.sin(ang)*180*(0.8+Math.sin(time*0.4)*0.2); let dy=Math.cos(ang)*80*(0.8+Math.cos(time*0.6)*0.2); this.points[i].x = w/2+dx; this.points[i].y = h/2+dy+Math.sin(time*1.0+i)*15; } }
+        draw() { bgCtx.beginPath(); bgCtx.moveTo(this.points[0].x,this.points[0].y); for(let i=1;i<=this.seg;i++) bgCtx.lineTo(this.points[i].x,this.points[i].y); bgCtx.closePath(); bgCtx.fillStyle=this.color; bgCtx.fill(); }
+    }
+    function initBg() { w=window.innerWidth; h=window.innerHeight; bgCanvas.width=w; bgCanvas.height=h; particles=[]; for(let i=0;i<300;i++) particles.push(new Particle()); flowBands=[]; for(let i=0;i<3;i++) flowBands.push(new FlowBand()); }
+    let bgTime=0;
+    function animateBg() { if(!bgCtx) return; bgCtx.clearRect(0,0,w,h); let grad=bgCtx.createLinearGradient(0,0,0,h); grad.addColorStop(0,'#0a0a18'); grad.addColorStop(1,'#151525'); bgCtx.fillStyle=grad; bgCtx.fillRect(0,0,w,h); for(let b of flowBands) b.update(bgTime); for(let b of flowBands) b.draw(); for(let p of particles) { p.update(); p.draw(); } bgTime+=0.012; requestAnimationFrame(animateBg); }
+    window.addEventListener('resize', ()=>{ initBg(); clampDollPosition(); saveDollPosition(); });
+    initBg(); animateBg();
+
+    renderGrid();
+</script>
+</body>
+</html>

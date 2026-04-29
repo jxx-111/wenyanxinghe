@@ -1,0 +1,1310 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>纹衍星河 · 羌绣文创馆 | 非遗好物</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-deep: #0e0c16;
+            --bg-card: #1a1825;
+            --gold: #c9a96e;
+            --gold-light: #e5c687;
+            --red: #b34247;
+            --text-primary: #ede7dd;
+            --text-muted: #8a867c;
+            --text-secondary: #b9b3a8;
+            --border: #2a2538;
+            --border-light: #3a3550;
+            --font-serif: 'Noto Serif SC', 'STSong', 'KaiTi', serif;
+            --font-sans: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            --shadow-gold: 0 8px 25px rgba(201, 169, 110, 0.2);
+            --transition: 0.35s cubic-bezier(0.25, 0.8, 0.25, 1.2);
+        }
+
+        body {
+            font-family: var(--font-sans);
+            background: var(--bg-deep);
+            color: var(--text-primary);
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none" opacity="0.03"><path d="M20 20 L30 15 L40 20 L35 30 L25 30 Z" stroke="%23c9a96e" stroke-width="1"/><circle cx="70" cy="30" r="8" stroke="%23c9a96e" stroke-width="1"/><path d="M10 60 Q20 50 30 60 T50 60" stroke="%23c9a96e" stroke-width="1"/><circle cx="80" cy="70" r="10" stroke="%23b34247" stroke-width="1"/></svg>');
+            background-size: 200px 200px;
+            opacity: 0.5;
+        }
+
+        .nav {
+            position: fixed;
+            top: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 92%;
+            max-width: 1300px;
+            z-index: 1000;
+            background: rgba(14, 12, 22, 0.8);
+            backdrop-filter: blur(15px);
+            border-radius: 50px;
+            border: 1px solid rgba(201, 169, 110, 0.3);
+            transition: 0.3s;
+        }
+        .nav.scrolled {
+            background: rgba(14, 12, 22, 0.95);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.6);
+        }
+        .nav-inner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 32px;
+            height: 70px;
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-family: var(--font-serif);
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #fff;
+            text-decoration: none;
+        }
+        .logo-icon {
+            width: 38px;
+            height: 38px;
+            background: linear-gradient(135deg, #d4a855, #c4544a);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            animation: logoGlow 3s ease-in-out infinite;
+        }
+        @keyframes logoGlow {
+            0%,
+            100% {
+                box-shadow: 0 0 15px rgba(201, 169, 110, 0.4);
+            }
+            50% {
+                box-shadow: 0 0 30px rgba(201, 169, 110, 0.8);
+            }
+        }
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 24px;
+            align-items: center;
+        }
+        .nav-links a {
+            color: #bbb;
+            text-decoration: none;
+            font-size: 0.95rem;
+            padding: 6px 14px;
+            border-radius: 30px;
+            transition: 0.2s;
+            cursor: pointer;
+        }
+        .nav-links a:hover,
+        .nav-links a.active-link {
+            color: var(--gold-light);
+            background: rgba(201, 169, 110, 0.15);
+        }
+        .cart-btn {
+            background: var(--gold);
+            color: #1a1a14;
+            padding: 10px 22px;
+            border-radius: 30px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .cart-btn:hover {
+            background: var(--gold-light);
+        }
+        .mobile-menu {
+            display: none;
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 28px;
+            cursor: pointer;
+        }
+
+        .hero {
+            position: relative;
+            padding: 150px 20px 80px;
+            text-align: center;
+            background: radial-gradient(circle at 50% 20%, rgba(201, 169, 110, 0.15) 0%, transparent 70%);
+        }
+        .hero h1 {
+            font-family: var(--font-serif);
+            font-size: 3rem;
+            color: var(--gold-light);
+            letter-spacing: 6px;
+            margin-bottom: 16px;
+        }
+        .hero p {
+            font-size: 1.2rem;
+            color: var(--text-muted);
+            max-width: 600px;
+            margin: 0 auto 30px;
+        }
+        .search-box {
+            display: flex;
+            max-width: 450px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 40px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+        }
+        .search-box input {
+            flex: 1;
+            padding: 14px 20px;
+            background: transparent;
+            border: none;
+            color: #fff;
+            font-size: 1rem;
+            outline: none;
+        }
+        .search-box button {
+            background: var(--gold);
+            border: none;
+            padding: 0 28px;
+            font-weight: bold;
+            cursor: pointer;
+            color: #000;
+        }
+
+        .section {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        .section-title {
+            text-align: center;
+            font-family: var(--font-serif);
+            font-size: 2rem;
+            margin-bottom: 12px;
+            color: var(--gold-light);
+            letter-spacing: 3px;
+        }
+        .section-subtitle {
+            text-align: center;
+            color: var(--text-muted);
+            margin-bottom: 36px;
+            font-size: 0.95rem;
+        }
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+        .filter-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .filter-btn {
+            padding: 8px 22px;
+            border-radius: 30px;
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: 0.2s;
+            font-size: 0.9rem;
+        }
+        .filter-btn.active,
+        .filter-btn:hover {
+            background: var(--gold);
+            color: #000;
+            border-color: var(--gold);
+            font-weight: 600;
+        }
+        .sort-select {
+            padding: 10px 18px;
+            border-radius: 30px;
+            background: transparent;
+            border: 1px solid var(--border);
+            color: #fff;
+            cursor: pointer;
+        }
+        .sort-select option {
+            background: #1a1825;
+        }
+
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 28px;
+        }
+        .product-card {
+            background: rgba(26, 24, 37, 0.8);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            transition: var(--transition);
+            cursor: pointer;
+        }
+        .product-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-gold);
+            border-color: var(--gold);
+        }
+        .card-img {
+            height: 260px;
+            background: #1e1c2a;
+            position: relative;
+            overflow: hidden;
+        }
+        .card-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: 0.4s;
+        }
+        .product-card:hover .card-img img {
+            transform: scale(1.05);
+        }
+        .card-img .badge {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            background: var(--red);
+            color: #fff;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: bold;
+        }
+        .card-body {
+            padding: 18px;
+        }
+        .card-category {
+            font-size: 0.7rem;
+            color: var(--gold);
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+        .card-title {
+            font-family: var(--font-serif);
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+        .card-desc {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-bottom: 16px;
+        }
+        .card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .price {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--gold-light);
+        }
+        .add-btn {
+            background: var(--gold);
+            border: none;
+            color: #000;
+            padding: 8px 18px;
+            border-radius: 25px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .add-btn:hover {
+            background: var(--gold-light);
+        }
+
+        .modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(8px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            opacity: 0;
+            pointer-events: none;
+            transition: 0.3s;
+        }
+        .modal.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .modal-content {
+            background: #1a1825;
+            border-radius: 24px;
+            width: 90%;
+            max-width: 550px;
+            padding: 30px;
+            text-align: center;
+            border: 1px solid var(--gold);
+            position: relative;
+        }
+        .modal-img {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            border-radius: 16px;
+            margin-bottom: 20px;
+        }
+        .modal-close {
+            position: absolute;
+            top: 12px;
+            right: 18px;
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 2rem;
+            cursor: pointer;
+        }
+        .quantity-control {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin: 16px 0;
+        }
+        .qty-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--border);
+            border: none;
+            color: #fff;
+            font-size: 1.2rem;
+            cursor: pointer;
+        }
+        .qty-num {
+            width: 50px;
+            text-align: center;
+            background: transparent;
+            border: 1px solid var(--border);
+            color: #fff;
+            border-radius: 10px;
+        }
+
+        .heritage-section {
+            background: linear-gradient(180deg, rgba(14, 12, 22, 0.6) 0%, rgba(26, 24, 37, 0.9) 100%);
+            border-radius: 32px;
+            border: 1px solid var(--border-light);
+            padding: 40px 28px;
+            margin-top: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+        .heritage-section::before {
+            content: '';
+            position: absolute;
+            top: -50px;
+            right: -50px;
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(201, 169, 110, 0.08) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .heritage-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        .stat-card {
+            background: rgba(26, 24, 37, 0.7);
+            backdrop-filter: blur(8px);
+            border-radius: 20px;
+            padding: 28px 20px;
+            text-align: center;
+            border: 1px solid var(--border);
+            transition: 0.3s;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+        .stat-card:hover {
+            border-color: var(--gold);
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-gold);
+        }
+        .stat-card .stat-icon {
+            font-size: 2.6rem;
+            margin-bottom: 10px;
+            transition: 0.3s;
+        }
+        .stat-card:hover .stat-icon {
+            transform: scale(1.15);
+        }
+        .stat-card .stat-num {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--gold);
+            margin-bottom: 8px;
+        }
+        .stat-card .stat-label {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+        .stat-card .stat-hint {
+            font-size: 0.7rem;
+            color: var(--gold);
+            margin-top: 8px;
+            opacity: 0;
+            transition: 0.3s;
+            letter-spacing: 1px;
+        }
+        .stat-card:hover .stat-hint {
+            opacity: 1;
+        }
+
+        .gene-browser {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 20px;
+            padding: 24px;
+            margin-bottom: 32px;
+            border: 1px solid var(--border);
+        }
+        .gene-browser h3 {
+            font-family: var(--font-serif);
+            color: var(--gold-light);
+            margin-bottom: 8px;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .gene-search {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 18px;
+            flex-wrap: wrap;
+        }
+        .gene-search input {
+            flex: 1;
+            min-width: 180px;
+            padding: 10px 16px;
+            border-radius: 30px;
+            border: 1px solid var(--border);
+            background: rgba(0, 0, 0, 0.4);
+            color: #fff;
+            outline: none;
+            font-size: 0.9rem;
+        }
+        .gene-search input:focus {
+            border-color: var(--gold);
+        }
+        .gene-tags {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 16px;
+        }
+        .gene-tag {
+            padding: 5px 14px;
+            border-radius: 20px;
+            border: 1px solid var(--border);
+            cursor: pointer;
+            font-size: 0.75rem;
+            transition: 0.2s;
+            color: var(--text-secondary);
+            background: transparent;
+        }
+        .gene-tag.active,
+        .gene-tag:hover {
+            background: var(--gold);
+            color: #000;
+            border-color: var(--gold);
+        }
+        .gene-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 12px;
+            max-height: 260px;
+            overflow-y: auto;
+            padding-right: 8px;
+        }
+        .gene-grid::-webkit-scrollbar {
+            width: 4px;
+        }
+        .gene-grid::-webkit-scrollbar-thumb {
+            background: var(--gold);
+            border-radius: 4px;
+        }
+        .gene-item {
+            background: rgba(26, 24, 37, 0.8);
+            border-radius: 14px;
+            padding: 14px 8px;
+            text-align: center;
+            cursor: pointer;
+            border: 1px solid transparent;
+            transition: 0.25s;
+            min-height: 110px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+        .gene-item:hover {
+            border-color: var(--gold);
+            box-shadow: 0 0 18px rgba(201, 169, 110, 0.25);
+            transform: translateY(-3px);
+        }
+        .gene-item .gene-svg {
+            width: 50px;
+            height: 50px;
+            color: var(--gold-light);
+            transition: 0.3s;
+        }
+        .gene-item:hover .gene-svg {
+            color: #fff;
+            filter: drop-shadow(0 0 6px rgba(201, 169, 110, 0.7));
+        }
+        .gene-item .gene-name {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            letter-spacing: 1px;
+        }
+
+        .embroidery-demo-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+        .loom-area {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 20px;
+            padding: 20px;
+            border: 1px solid var(--border);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .loom-area h4 {
+            font-family: var(--font-serif);
+            color: var(--gold-light);
+            margin-bottom: 14px;
+            font-size: 1rem;
+        }
+        .loom-canvas {
+            width: 100%;
+            height: 220px;
+            background: #f5f0e6;
+            border-radius: 12px;
+            position: relative;
+            overflow: hidden;
+            cursor: crosshair;
+            border: 3px solid #8b7355;
+            box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.15);
+        }
+        .loom-canvas .loom-grid {
+            position: absolute;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(139, 115, 85, 0.15) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(139, 115, 85, 0.15) 1px, transparent 1px);
+            background-size: 20px 20px;
+            pointer-events: none;
+        }
+        .loom-dot {
+            position: absolute;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: var(--red);
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            animation: dotPop 0.4s ease-out;
+            box-shadow: 0 0 8px rgba(179, 66, 71, 0.6);
+        }
+        @keyframes dotPop {
+            0% {
+                transform: translate(-50%, -50%) scale(0);
+                opacity: 0;
+            }
+            60% {
+                transform: translate(-50%, -50%) scale(1.4);
+                opacity: 1;
+            }
+            100% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 0.8;
+            }
+        }
+        .loom-tools {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            margin-top: 12px;
+            flex-wrap: wrap;
+        }
+        .loom-tool {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: 0.2s;
+        }
+        .loom-tool:hover,
+        .loom-tool.active {
+            border-color: #fff;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.4);
+            transform: scale(1.1);
+        }
+        .btn-sm {
+            padding: 6px 14px;
+            border-radius: 20px;
+            border: 1px solid var(--border);
+            background: transparent;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 0.75rem;
+            transition: 0.2s;
+        }
+        .btn-sm:hover {
+            border-color: var(--gold);
+            color: var(--gold-light);
+        }
+
+        .stitch-demo {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 20px;
+            padding: 20px;
+            border: 1px solid var(--border);
+            text-align: center;
+        }
+        .stitch-demo h4 {
+            font-family: var(--font-serif);
+            color: var(--gold-light);
+            margin-bottom: 14px;
+            font-size: 1rem;
+        }
+        .stitch-stage {
+            width: 100%;
+            height: 220px;
+            background: #1a1825;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            border: 2px solid var(--border);
+        }
+        .stitch-svg {
+            width: 90%;
+            height: 90%;
+        }
+        .stitch-path {
+            stroke-dasharray: 300;
+            stroke-dashoffset: 300;
+            animation: stitchDraw 6s ease-in-out infinite; /* 默认速度放慢 */
+        }
+        @keyframes stitchDraw {
+            0% {
+                stroke-dashoffset: 300;
+            }
+            50% {
+                stroke-dashoffset: 0;
+            }
+            100% {
+                stroke-dashoffset: -300;
+            }
+        }
+        .stitch-controls {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 12px;
+            flex-wrap: wrap;
+        }
+
+        .course-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 18px;
+            margin-bottom: 28px;
+        }
+        .course-card {
+            background: rgba(26, 24, 37, 0.7);
+            border-radius: 16px;
+            padding: 20px;
+            border: 1px solid var(--border);
+            transition: 0.3s;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .course-card:hover {
+            border-color: var(--gold);
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-gold);
+        }
+        .course-level {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 0.65rem;
+            font-weight: bold;
+            letter-spacing: 1px;
+            width: fit-content;
+        }
+        .level-beginner {
+            background: rgba(90, 158, 150, 0.3);
+            color: #5a9e96;
+        }
+        .level-intermediate {
+            background: rgba(201, 169, 110, 0.3);
+            color: var(--gold);
+        }
+        .level-advanced {
+            background: rgba(179, 66, 71, 0.3);
+            color: var(--red);
+        }
+        .course-title {
+            font-family: var(--font-serif);
+            font-size: 1rem;
+            font-weight: 700;
+        }
+        .course-meta {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            display: flex;
+            gap: 12px;
+        }
+
+        .cart-modal {
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: 100%;
+            max-width: 400px;
+            height: 100vh;
+            background: #1a1825;
+            box-shadow: -10px 0 30px rgba(0, 0, 0, 0.8);
+            z-index: 3000;
+            transform: translateX(100%);
+            transition: 0.4s;
+            padding: 30px;
+            overflow-y: auto;
+            border-left: 1px solid var(--gold);
+        }
+        .cart-modal.open {
+            transform: translateX(0);
+        }
+        .cart-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 2999;
+            display: none;
+        }
+        .cart-overlay.show {
+            display: block;
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+                position: fixed;
+                top: 80px;
+                left: 5%;
+                width: 90%;
+                background: #1a1825;
+                border-radius: 20px;
+                flex-direction: column;
+                padding: 25px;
+                gap: 16px;
+                border: 1px solid var(--border);
+                z-index: 999;
+            }
+            .nav-links.show {
+                display: flex;
+            }
+            .mobile-menu {
+                display: block;
+            }
+            .heritage-stats {
+                grid-template-columns: 1fr;
+            }
+            .embroidery-demo-row {
+                grid-template-columns: 1fr;
+            }
+            .gene-grid {
+                grid-template-columns: repeat(auto-fill, minmax(75px, 1fr));
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav" id="mainNav">
+        <div class="nav-inner">
+            <a href="#" class="logo"><span class="logo-icon">✦</span>纹衍星河</a>
+            <button class="mobile-menu" onclick="toggleMenu()">☰</button>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="#">首页</a></li>
+                <li><a href="#">纹样库</a></li>
+                <li><a href="#">AI设计</a></li>
+                <li><a href="#" class="active-link">文创馆</a></li>
+                <li><a href="#" class="cart-btn" onclick="openCart()">🛒 购物车 <span id="cartCount">0</span></a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="hero">
+        <h1>羌绣新韵 · 匠心好物</h1>
+        <p>非遗纹样融入生活，每一件都承载着高原的祝福</p>
+        <div class="search-box">
+            <input type="text" id="searchInput" placeholder="搜索产品..." oninput="renderProducts()">
+            <button>🔍</button>
+        </div>
+    </div>
+
+    <section class="section" id="productSection">
+        <h2 class="section-title">✨ 文创产品</h2>
+        <p class="section-subtitle">非遗羌绣 × 现代美学，打造高品质文创好物</p>
+        <div class="controls">
+            <div class="filter-group">
+                <button class="filter-btn active" data-filter="all" onclick="setFilter('all', this)">全部</button>
+                <button class="filter-btn" data-filter="配饰" onclick="setFilter('配饰', this)">配饰</button>
+                <button class="filter-btn" data-filter="家居" onclick="setFilter('家居', this)">家居</button>
+                <button class="filter-btn" data-filter="礼品" onclick="setFilter('礼品', this)">礼品</button>
+            </div>
+            <select class="sort-select" onchange="setSort(this.value)">
+                <option value="default">默认排序</option>
+                <option value="price-asc">价格从低到高</option>
+                <option value="price-desc">价格从高到低</option>
+            </select>
+        </div>
+        <div class="product-grid" id="productGrid"></div>
+    </section>
+
+    <section class="section" id="heritageSection">
+        <h2 class="section-title">🏛️ 数字传习空间</h2>
+        <p class="section-subtitle">全息绣架 · 纹样基因库 · MR协作教学 · 沉浸式非遗体验</p>
+
+        <div class="heritage-section">
+            <div class="heritage-stats">
+                <div class="stat-card" onclick="scrollToGeneBrowser()">
+                    <div class="stat-icon">🧬</div>
+                    <div class="stat-num">200+</div>
+                    <div class="stat-label">纹样基因库</div>
+                    <div class="stat-hint">点击浏览 →</div>
+                </div>
+                <div class="stat-card" onclick="scrollToLoom()">
+                    <div class="stat-icon">🎥</div>
+                    <div class="stat-num">120fps</div>
+                    <div class="stat-label">动作捕捉</div>
+                    <div class="stat-hint">点击体验 →</div>
+                </div>
+                <div class="stat-card" onclick="scrollToCourses()">
+                    <div class="stat-icon">🥽</div>
+                    <div class="stat-num">MR教学</div>
+                    <div class="stat-label">混合现实传习</div>
+                    <div class="stat-hint">点击查看课程 →</div>
+                </div>
+            </div>
+
+            <div class="gene-browser" id="geneBrowser">
+                <h3>🧬 纹样基因库 <span style="font-size:0.7rem;color:var(--text-muted);">— 浏览羌族传统纹样</span></h3>
+                <div class="gene-search">
+                    <input type="text" id="geneSearchInput" placeholder="搜索纹样名称..." oninput="renderGeneLibrary()">
+                </div>
+                <div class="gene-tags" id="geneTags">
+                    <button class="gene-tag active" data-gene-filter="all" onclick="setGeneFilter('all', this)">全部</button>
+                    <button class="gene-tag" data-gene-filter="花" onclick="setGeneFilter('花', this)">🌸 花卉</button>
+                    <button class="gene-tag" data-gene-filter="云" onclick="setGeneFilter('云', this)">☁️ 云纹</button>
+                    <button class="gene-tag" data-gene-filter="几何" onclick="setGeneFilter('几何', this)">🔷 几何</button>
+                    <button class="gene-tag" data-gene-filter="动物" onclick="setGeneFilter('动物', this)">🦋 动物</button>
+                </div>
+                <div class="gene-grid" id="geneGrid"></div>
+            </div>
+
+            <div class="embroidery-demo-row" id="loomArea">
+                <div class="loom-area">
+                    <h4>🪡 虚拟绣架体验 <span style="font-size:0.7rem;color:var(--text-muted);">— 点击绣布留下针脚</span></h4>
+                    <div class="loom-canvas" id="loomCanvas">
+                        <div class="loom-grid"></div>
+                    </div>
+                    <div class="loom-tools" id="loomTools">
+                        <span style="font-size:0.7rem;color:var(--text-muted);margin-right:6px;">线色：</span>
+                    </div>
+                    <div style="display:flex;gap:8px;justify-content:center;margin-top:8px;">
+                        <button class="btn-sm" onclick="clearLoom()">🗑️ 清空绣布</button>
+                        <button class="btn-sm" onclick="fillLoomPattern()">✨ 生成纹样</button>
+                    </div>
+                </div>
+
+                <div class="stitch-demo">
+                    <h4>🎬 刺绣过程演示 <span style="font-size:0.7rem;color:var(--text-muted);">— 观察针法轨迹</span></h4>
+                    <div class="stitch-stage" id="stitchStage">
+                        <svg class="stitch-svg" viewBox="0 0 200 200" id="stitchSvg">
+                            </svg>
+                    </div>
+                    <div class="stitch-controls">
+                        <button class="btn-sm" onclick="restartStitch()">🔄 重播动画</button>
+                        <button class="btn-sm" onclick="switchStitchPattern()">🔀 切换纹样</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="courseArea">
+                <h3 style="font-family:var(--font-serif);color:var(--gold-light);margin-bottom:16px;font-size:1.1rem;">
+                    📚 传习课程 <span style="font-size:0.7rem;color:var(--text-muted);">— 从入门到精通</span>
+                </h3>
+                <div class="course-grid" id="courseGrid"></div>
+            </div>
+        </div>
+    </section>
+
+    <div class="modal" id="productModal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal()">✕</button>
+            <img id="modalImg" class="modal-img" src="" alt="">
+            <h3 id="modalName"></h3>
+            <p style="color:var(--gold)">¥<span id="modalPrice"></span></p>
+            <p id="modalDesc" style="margin:12px 0;"></p>
+            <div class="quantity-control">
+                <button class="qty-btn" onclick="changeQty(-1)">−</button>
+                <input type="number" class="qty-num" id="qtyInput" value="1" min="1" readonly>
+                <button class="qty-btn" onclick="changeQty(1)">+</button>
+            </div>
+            <button class="add-btn" style="width:100%; padding:14px;" onclick="addToCartFromModal()">加入购物车</button>
+        </div>
+    </div>
+
+    <div class="cart-overlay" id="cartOverlay" onclick="closeCart()"></div>
+    <div class="cart-modal" id="cartSidebar">
+        <button class="modal-close" onclick="closeCart()" style="position:absolute; top:12px; right:18px;">✕</button>
+        <h3>🛒 购物车</h3>
+        <div id="cartItems" style="margin:20px 0;">购物车空空如也</div>
+        <div style="font-weight:bold; margin-top:16px;">总计：¥<span id="totalPrice">0</span></div>
+        <button class="add-btn" style="width:100%; margin-top:16px;" onclick="alert('结算功能开发中')">去结算</button>
+    </div>
+
+    <script>
+        const products = [
+            { id:1, name:'芙蓉镜', category:'配饰', price:60, img:'照片/芙蓉镜.jpg', desc:'手工羌绣羊角花纹，复古铜框，吉祥纳福', badge:'热卖' },
+            { id:2, name:'羌房四宝礼盒', category:'礼品', price:1700, img:'照片/羌房四宝.jpg', desc:'文房四宝与羌绣纹样结合，送礼佳品', badge:'新品' },
+            { id:3, name:'绣花钱包', category:'配饰', price:80, img:'照片/钱包.jpg', desc:'小羊皮羌绣云纹，随身携带的祝福', badge:'' },
+            { id:4, name:'熊猫杯垫', category:'家居', price:70, img:'照片/熊猫杯垫.jpg', desc:'硅藻泥材质，羌绣回纹与熊猫元素', badge:'' },
+            { id:5, name:'轻罗团扇', category:'礼品', price:68, img:'照片/轻罗团扇.png', desc:'真丝扇面，手工蝶恋花纹刺绣', badge:'限定' },
+            { id:6, name:'羌纹笔记本', category:'学习用品', price:80, img:'照片/笔记本.jpg', desc:'手工羌绣羊角花纹多元笔记本', badge:'' }
+        ];
+
+        const genePatterns = [
+            { name: '羊角花', category: '花', svg: '<circle cx="25" cy="10" r="8" fill="currentColor"/><ellipse cx="12" cy="28" rx="6" ry="9" fill="currentColor"/><ellipse cx="38" cy="28" rx="6" ry="9" fill="currentColor"/>' },
+            { name: '祥云纹', category: '云', svg: '<path d="M6 26 Q6 14 18 14 Q26 14 26 20 Q26 26 18 26 Q13 26 13 20" fill="none" stroke="currentColor" stroke-width="2.5"/>' },
+            { name: '星芒纹', category: '几何', svg: '<polygon points="25,3 28,16 42,16 30,23 34,37 25,28 16,37 20,23 8,16 22,16" fill="currentColor"/>' },
+            { name: '回纹', category: '几何', svg: '<path d="M8 20 L20 20 L20 32 L32 32 L32 20 L44 20" fill="none" stroke="currentColor" stroke-width="2.5"/>' },
+            { name: '团花纹', category: '花', svg: '<circle cx="25" cy="25" r="11" fill="none" stroke="currentColor" stroke-width="2.5"/><circle cx="25" cy="25" r="4" fill="currentColor"/>' },
+            { name: '蝴蝶纹', category: '动物', svg: '<path d="M25 14 Q14 7 9 14 Q7 21 14 24 Q7 27 9 34 Q14 41 25 34 Q36 41 41 34 Q43 27 36 24 Q43 21 41 14 Q36 7 25 14Z" fill="none" stroke="currentColor" stroke-width="2"/>' },
+            { name: '太阳纹', category: '几何', svg: '<circle cx="25" cy="25" r="10" fill="none" stroke="currentColor" stroke-width="2.5"/><path d="M25 3 L25 8 M25 42 L25 47 M3 25 L8 25 M42 25 L47 25" stroke="currentColor" stroke-width="2"/>' },
+            { name: '水波纹', category: '云', svg: '<path d="M5 28 Q16 18 27 28 Q38 38 49 28" fill="none" stroke="currentColor" stroke-width="2.5"/>' },
+            { name: '牡丹纹', category: '花', svg: '<circle cx="25" cy="18" r="7" fill="currentColor"/><ellipse cx="14" cy="28" rx="5" ry="9" fill="currentColor"/><ellipse cx="36" cy="28" rx="5" ry="9" fill="currentColor"/>' },
+            { name: '火镰纹', category: '几何', svg: '<path d="M14 24 L25 13 L36 24 L25 35 Z" fill="none" stroke="currentColor" stroke-width="2.5"/>' },
+            { name: '云雀纹', category: '动物', svg: '<path d="M10 30 Q18 18 25 22 Q32 18 40 30" fill="none" stroke="currentColor" stroke-width="2.5"/>' },
+            { name: '方胜纹', category: '几何', svg: '<rect x="7" y="7" width="36" height="36" fill="none" stroke="currentColor" stroke-width="2.5" transform="rotate(45,25,25)"/>' },
+        ];
+
+        const courses = [
+            { title: '羌绣入门：基础针法', level: 'beginner', label: '入门', duration: '4周', desc: '学习羌绣基本针法，掌握打籽绣、链子绣等核心技艺。' },
+            { title: '纹样设计：从临摹到创作', level: 'intermediate', label: '进阶', duration: '6周', desc: '深入理解羌族纹样符号，学习设计原创图案。' },
+            { title: '色彩搭配：羌绣配色美学', level: 'intermediate', label: '进阶', duration: '3周', desc: '掌握羌绣传统配色体系与现代色彩理论结合。' },
+            { title: '大师班：羌绣传承人亲授', level: 'advanced', label: '高级', duration: '8周', desc: '国家级非遗传承人一对一指导，深度学习羌绣精髓。' },
+        ];
+
+        let cart = [];
+        let currentFilter = 'all';
+        let currentSort = 'default';
+        let selectedProduct = null;
+        let geneFilter = 'all';
+        let loomColor = '#b34247';
+        let stitchPatternIndex = 0;
+
+        function placeholderSVG(category) {
+            const colors = { '配饰': '#c9a96e', '家居': '#b34247', '礼品': '#5a9e96' };
+            const col = colors[category] || '#c9a96e';
+            return `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='45' fill='%231a1825' stroke='${col.replace('#','%23')}' stroke-width='2'/%3E%3Cpath d='M35 35 L50 20 L65 35 L60 50 L40 50 Z' fill='${col.replace('#','%23')}' opacity='0.4'/%3E%3Ccircle cx='50' cy='65' r='8' fill='${col.replace('#','%23')}'/%3E%3C/svg%3E`;
+        }
+
+        function renderProducts() {
+            const grid = document.getElementById('productGrid');
+            const search = document.getElementById('searchInput').value.toLowerCase();
+            let filtered = products.filter(p => currentFilter === 'all' || p.category === currentFilter);
+            if (search) filtered = filtered.filter(p => p.name.includes(search) || p.desc.includes(search));
+            if (currentSort === 'price-asc') filtered.sort((a, b) => a.price - b.price);
+            if (currentSort === 'price-desc') filtered.sort((a, b) => b.price - a.price);
+
+            grid.innerHTML = filtered.map(p => `
+                <div class="product-card" onclick="openDetail(${p.id})">
+                    <div class="card-img">
+                        ${p.badge ? `<span class="badge">${p.badge}</span>` : ''}
+                        <img src="${p.img}" onerror="this.src='${placeholderSVG(p.category)}'" loading="lazy" alt="${p.name}">
+                    </div>
+                    <div class="card-body">
+                        <div class="card-category">${p.category}</div>
+                        <div class="card-title">${p.name}</div>
+                        <div class="card-desc">${p.desc}</div>
+                        <div class="card-footer">
+                            <span class="price">¥${p.price}</span>
+                            <button class="add-btn" onclick="event.stopPropagation(); addToCart(${p.id})">🛒 加入</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function setFilter(cat, btn) {
+            currentFilter = cat;
+            document.querySelectorAll('#productSection .filter-btn').forEach(b => b.classList.remove('active'));
+            if (btn) btn.classList.add('active');
+            else document.querySelector(`#productSection .filter-btn[data-filter="${cat}"]`)?.classList.add('active');
+            renderProducts();
+        }
+        function setSort(sort) { currentSort = sort; renderProducts(); }
+
+        function openDetail(id) {
+            selectedProduct = products.find(p => p.id === id);
+            if (!selectedProduct) return;
+            document.getElementById('modalImg').src = selectedProduct.img;
+            document.getElementById('modalImg').onerror = function() { this.src = placeholderSVG(selectedProduct.category); };
+            document.getElementById('modalName').textContent = selectedProduct.name;
+            document.getElementById('modalPrice').textContent = selectedProduct.price;
+            document.getElementById('modalDesc').textContent = selectedProduct.desc;
+            document.getElementById('qtyInput').value = 1;
+            document.getElementById('productModal').classList.add('active');
+        }
+        function closeModal() { document.getElementById('productModal').classList.remove('active'); }
+        function changeQty(delta) {
+            let qty = parseInt(document.getElementById('qtyInput').value) + delta;
+            if (qty < 1) qty = 1;
+            document.getElementById('qtyInput').value = qty;
+        }
+        function addToCartFromModal() {
+            if (!selectedProduct) return;
+            const qty = parseInt(document.getElementById('qtyInput').value);
+            addToCart(selectedProduct.id, qty);
+            closeModal();
+        }
+
+        function addToCart(productId, qty = 1) {
+            const product = products.find(p => p.id === productId);
+            const existing = cart.find(item => item.id === productId);
+            if (existing) existing.quantity += qty;
+            else cart.push({ ...product, quantity: qty });
+            updateCartUI();
+        }
+        function removeFromCart(id) { cart = cart.filter(item => item.id !== id); updateCartUI(); }
+        function updateCartUI() {
+            const count = cart.reduce((sum, item) => sum + item.quantity, 0);
+            document.getElementById('cartCount').textContent = count;
+            const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+            document.getElementById('totalPrice').textContent = total;
+            const itemsDiv = document.getElementById('cartItems');
+            if (cart.length === 0) {
+                itemsDiv.innerHTML = '<p style="color:var(--text-muted);text-align:center;">购物车空空如也~</p>';
+            } else {
+                itemsDiv.innerHTML = cart.map(item => `
+                    <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);gap:8px;">
+                        <span style="flex:1;font-size:0.85rem;">${item.name} × ${item.quantity}</span>
+                        <span style="color:var(--gold);font-weight:bold;">¥${item.price * item.quantity}</span>
+                        <button onclick="removeFromCart(${item.id})" style="background:none;border:none;color:#e55;cursor:pointer;font-size:1rem;">🗑️</button>
+                    </div>
+                `).join('');
+            }
+        }
+        function openCart() {
+            document.getElementById('cartSidebar').classList.add('open');
+            document.getElementById('cartOverlay').classList.add('show');
+        }
+        function closeCart() {
+            document.getElementById('cartSidebar').classList.remove('open');
+            document.getElementById('cartOverlay').classList.remove('show');
+        }
+
+        function renderGeneLibrary() {
+            const grid = document.getElementById('geneGrid');
+            const search = document.getElementById('geneSearchInput').value.toLowerCase();
+            let filtered = genePatterns.filter(g => geneFilter === 'all' || g.category === geneFilter);
+            if (search) filtered = filtered.filter(g => g.name.includes(search));
+            grid.innerHTML = filtered.map(g => `
+                <div class="gene-item" onclick="showGeneDetail('${g.name}')" title="${g.name}">
+                    <svg viewBox="0 0 50 50" class="gene-svg">${g.svg}</svg>
+                    <span class="gene-name">${g.name}</span>
+                </div>
+            `).join('');
+        }
+        function setGeneFilter(cat, btn) {
+            geneFilter = cat;
+            document.querySelectorAll('#geneTags .gene-tag').forEach(b => b.classList.remove('active'));
+            if (btn) btn.classList.add('active');
+            renderGeneLibrary();
+        }
+        function showGeneDetail(name) {
+            const pattern = genePatterns.find(g => g.name === name);
+            if (!pattern) return;
+            alert(`📖 ${pattern.name}\n所属类别：${pattern.category}\n\n这是羌族传统纹样中的重要元素。`);
+        }
+
+        function initLoom() {
+            const canvas = document.getElementById('loomCanvas');
+            const toolsDiv = document.getElementById('loomTools');
+            const colors = ['#b34247', '#c9a96e', '#2c3e50', '#5a9e96', '#1a1a1a', '#e5c687', '#8b5a2b', '#4a6fa5'];
+            toolsDiv.innerHTML = '<span style="font-size:0.7rem;color:var(--text-muted);margin-right:6px;">线色：</span>' +
+                colors.map((c, i) => `<div class="loom-tool${c === loomColor ? ' active' : ''}" style="background:${c};" onclick="selectLoomColor('${c}', this)"></div>`).join('');
+            canvas.onclick = function(e) {
+                if (e.target.closest('.loom-dot')) return;
+                const rect = canvas.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                const dot = document.createElement('div');
+                dot.className = 'loom-dot';
+                dot.style.left = x + 'px';
+                dot.style.top = y + 'px';
+                dot.style.background = loomColor;
+                dot.style.boxShadow = `0 0 8px ${loomColor}`;
+                canvas.appendChild(dot);
+                const dots = canvas.querySelectorAll('.loom-dot');
+                if (dots.length > 100) dots[0].remove();
+            };
+        }
+        function selectLoomColor(color, btn) {
+            loomColor = color;
+            document.querySelectorAll('#loomTools .loom-tool').forEach(t => t.classList.remove('active'));
+            if (btn) btn.classList.add('active');
+        }
+        function clearLoom() { document.querySelectorAll('#loomCanvas .loom-dot').forEach(d => d.remove()); }
+        function fillLoomPattern() {
+            clearLoom();
+            const canvas = document.getElementById('loomCanvas');
+            const rect = canvas.getBoundingClientRect();
+            const cx = rect.width / 2, cy = rect.height / 2;
+            const colors = ['#b34247', '#c9a96e', '#5a9e96', '#e5c687', '#2c3e50'];
+            for (let i = 0; i < 40; i++) {
+                const angle = (i / 40) * Math.PI * 2;
+                const radius = 50 + Math.random() * 30;
+                const x = cx + Math.cos(angle) * radius;
+                const y = cy + Math.sin(angle) * radius;
+                setTimeout(() => {
+                    const dot = document.createElement('div');
+                    dot.className = 'loom-dot';
+                    dot.style.left = x + 'px';
+                    dot.style.top = y + 'px';
+                    dot.style.background = colors[Math.floor(Math.random() * colors.length)];
+                    dot.style.boxShadow = `0 0 6px ${dot.style.background}`;
+                    canvas.appendChild(dot);
+                }, i * 25);
+            }
+            setTimeout(() => {
+                for (let i = 0; i < 8; i++) {
+                    const angle = (i / 8) * Math.PI * 2;
+                    const r = 20;
+                    const dot = document.createElement('div');
+                    dot.className = 'loom-dot';
+                    dot.style.left = (cx + Math.cos(angle) * r) + 'px';
+                    dot.style.top = (cy + Math.sin(angle) * r) + 'px';
+                    dot.style.background = '#c9a96e';
+                    dot.style.boxShadow = '0 0 8px #c9a96e';
+                    dot.style.width = '18px';
+                    dot.style.height = '18px';
+                    canvas.appendChild(dot);
+                }
+            }, 1000);
+        }
+
+        // 刺绣动画数据 —— 所有持续时间增加以减慢速度
+        const stitchPatterns = [
+            `<circle cx="100" cy="55" r="28" fill="none" stroke="#c9a96e" stroke-width="2.5" class="stitch-path" style="stroke-dasharray:180;stroke-dashoffset:180;animation-duration:5s;"/>
+             <ellipse cx="72" cy="105" rx="20" ry="30" fill="none" stroke="#b34247" stroke-width="2.5" class="stitch-path" style="stroke-dasharray:130;stroke-dashoffset:130;animation-duration:6s;animation-delay:0.6s;"/>
+             <ellipse cx="128" cy="105" rx="20" ry="30" fill="none" stroke="#b34247" stroke-width="2.5" class="stitch-path" style="stroke-dasharray:130;stroke-dashoffset:130;animation-duration:6s;animation-delay:1.2s;"/>
+             <path d="M55 150 Q100 125 145 150" fill="none" stroke="#5a9e96" stroke-width="2" class="stitch-path" style="stroke-dasharray:110;stroke-dashoffset:110;animation-duration:5s;animation-delay:1.8s;"/>`,
+            `<polygon points="100,20 108,60 150,60 115,82 128,125 100,98 72,125 85,82 50,60 92,60" fill="none" stroke="#e5c687" stroke-width="2.5" class="stitch-path" style="stroke-dasharray:250;stroke-dashoffset:250;animation-duration:7s;"/>
+             <circle cx="100" cy="72" r="15" fill="none" stroke="#c9a96e" stroke-width="2" class="stitch-path" style="stroke-dasharray:95;stroke-dashoffset:95;animation-duration:5s;animation-delay:1s;"/>`,
+            `<path d="M100 55 Q78 40 72 55 Q68 70 80 78 Q68 86 72 100 Q78 115 100 100 Q122 115 128 100 Q132 86 120 78 Q132 70 128 55 Q122 40 100 55Z" fill="none" stroke="#b34247" stroke-width="2.5" class="stitch-path" style="stroke-dasharray:280;stroke-dashoffset:280;animation-duration:8s;"/>
+             <line x1="100" y1="78" x2="100" y2="100" stroke="#c9a96e" stroke-width="2" class="stitch-path" style="stroke-dasharray:25;stroke-dashoffset:25;animation-duration:4s;animation-delay:2s;"/>`
+        ];
+
+        function restartStitch() {
+            const svg = document.getElementById('stitchSvg');
+            svg.innerHTML = stitchPatterns[stitchPatternIndex];
+            const paths = svg.querySelectorAll('.stitch-path');
+            paths.forEach(p => {
+                p.style.animation = 'none';
+                p.offsetHeight;
+                p.style.animation = '';
+            });
+        }
+        function switchStitchPattern() {
+            stitchPatternIndex = (stitchPatternIndex + 1) % stitchPatterns.length;
+            restartStitch();
+        }
+
+        function renderCourses() {
+            const grid = document.getElementById('courseGrid');
+            grid.innerHTML = courses.map(c => `
+                <div class="course-card" onclick="alert('📚 ${c.title}\\n时长：${c.duration}\\n等级：${c.label}\\n\\n${c.desc}')">
+                    <span class="course-level level-${c.level}">${c.label}</span>
+                    <div class="course-title">${c.title}</div>
+                    <p style="font-size:0.8rem;color:var(--text-muted);">${c.desc}</p>
+                    <div class="course-meta">
+                        <span>⏱ ${c.duration}</span>
+                        <span>📖 ${c.level === 'beginner' ? '零基础' : c.level === 'intermediate' ? '需基础' : '需精通'}</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function scrollToGeneBrowser() { document.getElementById('geneBrowser').scrollIntoView({ behavior: 'smooth', block: 'center' }); }
+        function scrollToLoom() { document.getElementById('loomArea').scrollIntoView({ behavior: 'smooth', block: 'center' }); }
+        function scrollToCourses() { document.getElementById('courseArea').scrollIntoView({ behavior: 'smooth', block: 'center' }); }
+
+        window.addEventListener('scroll', () => document.getElementById('mainNav').classList.toggle('scrolled', window.scrollY > 50));
+        function toggleMenu() { document.getElementById('navLinks').classList.toggle('show'); }
+
+        document.getElementById('productModal').addEventListener('click', function(e) { if (e.target === this) closeModal(); });
+        document.getElementById('cartOverlay').addEventListener('click', closeCart);
+
+        function init() {
+            renderProducts();
+            renderGeneLibrary();
+            renderCourses();
+            initLoom();
+            document.getElementById('stitchSvg').innerHTML = stitchPatterns[0];
+        }
+        init();
+    </script>
+</body>
+</html>
